@@ -151,6 +151,31 @@ class TafLong extends Taf {
       parent::__construct($element);
     }
 }
+class Sigmet extends Message {
+  /* Definit un Taf à partir de l'élément xml */
+
+  function __construct($element) {
+      parent::__construct($element);
+  }
+}
+class SigmetX extends Sigmet {
+  function __construct($element) {
+    $this->ns = 'LS';
+    parent::__construct($element);
+  }
+}
+class Sigmet_tca extends Sigmet {
+    function __construct($element) {
+      $this->ns = 'LY';
+      parent::__construct($element);
+    }
+}
+class Sigmet_vaa extends Sigmet {
+  function __construct($element) {
+    $this->ns = 'LV';
+    parent::__construct($element);
+  }
+}
 
 
 class MessageManager extends Metgate {   
@@ -239,7 +264,7 @@ class AirmetManager extends MessageManager {
         $this->label = "Airmet";
   }
 }
-class VAAManager extends MessageManager {
+class VaaManager extends MessageManager {
   function __construct() {
         $this->tag = "LU";
         $this->url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=GetFeature&typeName=".$this->tag."_last";
@@ -248,7 +273,7 @@ class VAAManager extends MessageManager {
         $this->label = "Vaa";
   }
 }
-class TCAManager extends MessageManager {
+class TcaManager extends MessageManager {
   function __construct() {
         $this->tag = "LK";
         $this->url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=GetFeature&typeName=".$this->tag."_last";
@@ -317,6 +342,75 @@ class TafManager extends MessageManager {
 
     }
 }
+class SigmetXManager extends MessageManager {
+  function __construct() {
+      $this->tag = "LS";
+      $this->url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=GetFeature&typeName=".$this->tag."_last";
+      $this->ns = $this->tag;
+      $this->type_enfant = 'SigmetX';
+      $this->label = "Sigmet";
+  }
+}
+class SigmetVaaManager extends MessageManager {
+  function __construct() {
+      $this->tag = "LV";
+      $this->url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=GetFeature&typeName=".$this->tag."_last";
+      $this->ns = $this->tag;
+      $this->type_enfant = 'Sigmet_vaa';
+      $this->label = "SigmetVAA";
+  }
+}
+class SigmetTcaManager extends MessageManager {
+  function __construct() {
+      $this->tag = "LY";
+      $this->url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=GetFeature&typeName=".$this->tag."_last";
+      $this->ns = $this->tag;
+      $this->type_enfant = 'Sigmet_tca';
+      $this->label = "SigmetTCA";
+  }
+}
+class SigmetManager extends MessageManager {
+  function __construct() {
+      $this->managers = array(new SigmetXManager(),  new SigmetTcaManager(), new SigmetVaaManager());
+  }
+
+  public function get_last_message_by_id($OACIs) {
+      $reponse = [];
+      foreach($this->managers as $key => $manager) {
+          $messages = $manager->get_last_message_by_id($OACIs);
+          foreach($messages as $oaci => $message) {
+              if ( ! array_key_exists($oaci, $reponse)) { $reponse[$oaci] = array();}
+              $reponse[$oaci][$manager->label] = $message[$manager->label];
+          }
+      }
+      return $reponse;
+  }
+
+  public function get_last_message_by_bbox($bbox) {
+    $reponse = [];
+      foreach($this->managers as $key => $manager) {
+          $messages = $manager->get_last_message_by_bbox($bbox);
+          foreach($messages as $oaci => $message) {
+              if ( ! array_key_exists($oaci, $reponse)) { $reponse[$oaci] = array();}
+              $reponse[$oaci][$manager->label] = $message[$manager->label];
+          }
+      }
+      return $reponse;
+  }
+
+  public function get_last_message_by_id_pattern($pattern) {
+    $reponse = [];
+      foreach($this->managers as $key => $manager) {
+          $messages = $manager->get_last_message_by_id_pattern($pattern);
+          foreach($messages as $oaci => $message) {
+              if ( ! array_key_exists($oaci, $reponse)) { $reponse[$oaci] = array();}
+              $reponse[$oaci][$manager->label] = $message[$manager->label];
+          }
+      }
+      return $reponse;
+
+  }
+}
 
 // Décrit paramètres METAR
 // $url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=DescribeFeatureType&typeName=LS_last";
@@ -330,19 +424,28 @@ $debut = time();
 $retour_requete = null;
 switch ($message) {
     case 'METAR':
-      $messageconteneur = new MetarManager(); break;
+        $messageconteneur = new MetarManager(); break;
     case 'TAF':
-      $messageconteneur = new TafManager(); break;
+        $messageconteneur = new TafManager(); break;
     case 'SPECI':
         $messageconteneur = new SpeciManager(); break;
     case 'AIRMET':
-          $messageconteneur = new AirmetManager(); break;
+        $messageconteneur = new AirmetManager(); break;
     case 'VAA':
-            $messageconteneur = new VAAManager(); break;
+        $messageconteneur = new VaaManager(); break;
     case 'TCA':
-              $messageconteneur = new TCAManager(); break;
+        $messageconteneur = new TcaManager(); break;
+    case 'SIGMET':
+        $messageconteneur = new SigmetManager(); break;
+    case 'SIGMETX':
+        $messageconteneur = new SigmetXManager(); break;
+    case 'SIGMETVAA':
+        $messageconteneur = new SigmetVaaManager(); break;
+    case 'SIGMETTCA':
+        $messageconteneur = new SigmetTcaManager(); break;
+              
     default:
-      echo "Paramètre message absent ou message non traité ! Valeurs acceptées : METAR, TAF, SPECI, AIRMET, VAA, TCA";
+      echo "Paramètre message absent ou message non traité ! Valeurs acceptées : METAR, TAF, SPECI, AIRMET, VAA, TCA, SIGMET, SIGMETX, SIGMETTAC, SIGMETVAA";
       die();
 }
 
