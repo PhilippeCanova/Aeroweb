@@ -50,6 +50,10 @@ span.badge.cpt_layer{
 span.cpt_layer {
 	min-width: 1.5rem;
 }
+.sidenav-overlay {
+	background-color: rgba(0,0,0,0.2);
+	/*display: none !important; */
+}
 
 .select-dropdown{
 	color:grey;

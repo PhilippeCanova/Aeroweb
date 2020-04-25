@@ -818,13 +818,6 @@ function choix_mode(mymode) {
 	context.mode = mymode;
 	$('nav div ul li a i').removeClass('red-text');
 
-	/*
-	$('#small_menu li a:eq( 0 )').text($_observations);
-	$('#small_menu li a:eq( 1 )').text($_previsions);
-	$('#small_menu li a:eq( 2 )').text($_coupe_verticale);
-	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
-	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
-	*/
 	switch (context.mode) {
 		case 'coupe_verticale':
 			mymap.setDrawMode('Point');
