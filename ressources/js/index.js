@@ -249,7 +249,7 @@ function init_carto(id_div) {
 					serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 1,
 				tag: "prevision",
 				id: 'uv_height',
 				libelle: $_layer_uv_10m,
@@ -265,7 +265,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'ff_raf_height',
 				libelle: $_layer_rafale,
@@ -281,7 +281,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 1,
 				tag: "prevision",
 				id: 'uv_isobaric',
 				libelle: $_layer_uv_alt,
@@ -299,7 +299,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 't_sol_arome',
 				libelle: $_layer_t,
@@ -316,7 +316,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'td',
 				libelle: $_layer_td,
@@ -333,7 +333,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'rrtt',
 				libelle: $_layer_rrtt,
@@ -350,7 +350,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'ngtt',
 				libelle: $_layer_ngtt,
@@ -367,7 +367,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'gafor_visi_metro',
 				libelle: $_layer_visi_metro,
@@ -384,7 +384,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'gafor_plafond_metro',
 				libelle: $_layer_plafond_metro,
@@ -401,7 +401,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 1,
 				tag: "prevision",
 				id: 'h_coulim',
 				libelle: $_layer_hcl,
@@ -418,7 +418,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 1,
 				tag: "prevision",
 				id: 'vv2_isobaric',
 				libelle: $_layer_vv2,
@@ -437,7 +437,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'sat_isp',
 				libelle: $_layer_sat_isp,
@@ -454,7 +454,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'nebul_bas',
 				libelle: $_layer_nebul_bas,
@@ -471,7 +471,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'nebul_moyen',
 				libelle: $_layer_nebul_moyen,
@@ -488,7 +488,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 'nebul_haut',
 				libelle: $_layer_nebul_haut,
@@ -505,7 +505,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arpege',
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "prevision",
 				id: 't_arpege',
 				libelle: $_t_layer_arpege,
@@ -524,7 +524,7 @@ function init_carto(id_div) {
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arpege',
-				opacity: 0.8,
+				opacity: 1,
 				tag: "prevision",
 				id: 'z_arpege',
 				libelle: $_z_layer_arpege,
@@ -542,7 +542,7 @@ function init_carto(id_div) {
 					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "observation",
 				id: 'ir_hrv_fr',
 				libelle: $_layer_sat_ir_fr,
@@ -558,7 +558,7 @@ function init_carto(id_div) {
 					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
-				opacity: 0.8,
+				opacity: 0.6,
 				tag: "observation",
 				id: 'radar_fr',
 				libelle: $_layer_radar_fr,
@@ -574,7 +574,7 @@ function init_carto(id_div) {
 					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
-				opacity: 0.8,
+				opacity: 1,
 				tag: "observation",
 				id: 'foudre_fr',
 				libelle: $_layer_foudre_fr,
