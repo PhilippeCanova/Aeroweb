@@ -10,6 +10,11 @@ var version = '1.0';
 var context = new context_Controller();
 
 
+function get_hPa_by_FL ($value) {
+	
+	return ' - ';
+};
+
 function access_direct(origin, side_nav_id) {
 
 	if (origin == "fr") contenu = vigilance_metropole();
@@ -660,7 +665,7 @@ function init_carto(id_div) {
 			$.each(layer.elevationLevels, function (key, value) {
 				p += "<option class='myselect'value='" + value + "' ";
 				if (layer.source.params.ELEVATION == value) p += "selected";
-				p += ">" + $_layer_elevationLabel + " " + value + " " + layer.elevationUnit + "</option>";
+				p += ">" + $_layer_elevationLabel + " " + value + " " + layer.elevationUnit + get_hPa_by_FL(value) +  "</option>";
 			});
 
 			p += "</select><label></label></div>";
