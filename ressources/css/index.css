@@ -47,6 +47,9 @@ span.badge.cpt_layer{
 	background-color: #26a69a;
 	border-radius: 5px;
 }
+span.cpt_layer {
+	min-width: 1.5rem;
+}
 
 .select-dropdown{
 	color:grey;
