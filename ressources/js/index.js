@@ -9,10 +9,13 @@ var coupe_trajet_en_cours = null;
 var version = '1.0';
 var context = new context_Controller();
 
+hpa_fl = {  '300':'300', '350':'265', '400':'240', '450':'210', '500':'180', '550':'160', 
+			'600':'140','650':'120', '700':'100', '750':'080', '800':'065', '850':'050', 
+			'900':'045', '925':'035', '950':'025', '1000': '005'}
 
-function get_hPa_by_FL ($value) {
-	
-	return ' - ';
+function get_hPa_by_FL (value) {
+	if (typeof(hpa_fl[value]) == 'undefined') { return ''; }
+	return ' - FL ' + hpa_fl[value];
 };
 
 function access_direct(origin, side_nav_id) {
