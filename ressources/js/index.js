@@ -36,7 +36,7 @@ function vigilance_metropole(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = 2.45;
 	if (zoom == null) zoom = 1;
 	//var extent = [-9, 38.5, 10, 54];
-	var extent = [-45, 20, 45, 70];
+	var extent = [-70, 20, 45, 70];
 	var contenu = { origin: 'fr', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.com/integration/sim-portail/generated/integration/img/vigilance/mn.gif', text: "<strong>Vigilance<br>France Métropole</strong>", link: 'http://vigilance.meteofrance.com' };
 	return contenu;
 }
