@@ -144,13 +144,21 @@ class map_Controler {
 		});
 
 
-		this.osm_layer = new ol.layer.Tile({
+		/*this.osm_layer = new ol.layer.Tile({
 			source: new ol.source.OSM()
-		});
+		});*/
+
+		//https://aviation.meteo.fr/dmap-carto/aeroweb-vfr/level8/y91/x129.png
+		this.fond = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'https://aviation.meteo.fr/dmap-carto/aeroweb-vfr/level{z}/y{y}/x{x}.png'
+
+			})
+		  })
 
 
-
-		this.mymap.addLayer(this.osm_layer);
+		//this.mymap.addLayer(this.osm_layer);
+		this.mymap.addLayer(this.fond);
 		this.mymap.addLayer(this.layerPoint);
 		this.mymap.addLayer(this.layerLine);
 
