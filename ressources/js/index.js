@@ -818,6 +818,13 @@ function choix_mode(mymode) {
 	context.mode = mymode;
 	$('nav div ul li a i').removeClass('red-text');
 
+	/*
+	$('#small_menu li a:eq( 0 )').text($_observations);
+	$('#small_menu li a:eq( 1 )').text($_previsions);
+	$('#small_menu li a:eq( 2 )').text($_coupe_verticale);
+	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
+	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
+	*/
 	switch (context.mode) {
 		case 'coupe_verticale':
 			mymap.setDrawMode('Point');
@@ -826,7 +833,7 @@ function choix_mode(mymode) {
 			$('#play_stop i').text(slider_animate.stop());
 
 			$('#menu_droit').attr('data-target', 'menu1');
-			$('nav div ul li a i:eq( 0 )').addClass('red-text');
+			$('nav div ul li a i:eq( 2 )').addClass('red-text');
 			$('#titre_small_menu').text($_coupe_verticale);
 			$('#Lance_coupe_trajet').hide();
 			break;
@@ -836,7 +843,7 @@ function choix_mode(mymode) {
 			$('footer div.row div.col div.row div.col:gt( 0 )').hide();
 			$('#play_stop i').text(slider_animate.stop());
 			$('#menu_droit').attr('data-target', 'menu2');
-			$('nav div ul li a i:eq( 1 )').addClass('red-text');
+			$('nav div ul li a i:eq( 3 )').addClass('red-text');
 			$('#titre_small_menu').text($_coupe_trajet);
 			if ($('#Lance_coupe_trajet').attr('data')) $('#Lance_coupe_trajet').show();
 			else $('#Lance_coupe_trajet').hide();
@@ -851,7 +858,7 @@ function choix_mode(mymode) {
 			});
 			$('footer div.row div.col div.row div.col:gt( 0 )').show();
 			$('#menu_droit').attr('data-target', 'menu3');
-			$('nav div ul li a i:eq( 2 )').addClass('red-text');
+			$('nav div ul li a i:eq( 1 )').addClass('red-text');
 			$('#titre_small_menu').text($_previsions);
 			var t = $("input[data_model='arpege']:checked");
 			if (t.length > 0) {
@@ -872,7 +879,7 @@ function choix_mode(mymode) {
 			});
 			$('footer div.row div.col div.row div.col:gt( 0 )').show();
 			$('#menu_droit').attr('data-target', 'menu4');
-			$('nav div ul li a i:eq( 3 )').addClass('red-text');
+			$('nav div ul li a i:eq( 0 )').addClass('red-text');
 			$('#titre_small_menu').text($_observations);
 
 			slider_animate.update(context.date_start_obs, context.date_min_obs, context.date_max_obs, context.step_obs, context.delay_obs)
@@ -989,16 +996,16 @@ function apply_language() {
 	$('#menu_preference_language select').val(context.language);
 	$('#menu_preference_language select').formSelect();
 
-	$('#nav-mobile li a label')[0].innerText = $_coupe_verticale;
-	$('#nav-mobile li a label')[1].innerText = $_coupe_trajet;
-	$('#nav-mobile li a label')[2].innerText = $_previsions;
-	$('#nav-mobile li a label')[3].innerText = $_observations;
+	$('#nav-mobile li a label')[0].innerText = $_observations;
+	$('#nav-mobile li a label')[1].innerText = $_previsions;
+	$('#nav-mobile li a label')[2].innerText = $_coupe_verticale;
+	$('#nav-mobile li a label')[3].innerText = $_coupe_trajet;
 	$('#nav-mobile li a label')[4].innerText = $_menu_preferences;
-
-	$('#small_menu li a:eq( 0 )').text($_coupe_verticale);
-	$('#small_menu li a:eq( 1 )').text($_coupe_trajet);
-	$('#small_menu li a:eq( 2 )').text($_previsions);
-	$('#small_menu li a:eq( 3 )').text($_observations);
+	
+	$('#small_menu li a:eq( 0 )').text($_observations);
+	$('#small_menu li a:eq( 1 )').text($_previsions);
+	$('#small_menu li a:eq( 2 )').text($_coupe_verticale);
+	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
 	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
 
 
