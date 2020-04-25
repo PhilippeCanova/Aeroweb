@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="nouislider/nouislider.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="ol/ol.css" />
+  <link type="text/css" rel="stylesheet" href="ressources/css/index.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="jquery/jquery-3.1.1.min.js"></script>
+  <script src="ressources/js/jquery-localisation.min.js" type="text/javascript" type="text/javascript"></script>
+  <script type="text/javascript" src="ol/ol.js"></script>
+  <script type="text/javascript" src="ressources/js/map_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/animate_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/context_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/slider_run_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/coupe_trajet_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/index.js"></script>
+
+  <script>
+  </script>
+</head>
+
+<body onload="init_materialize();check_localisation();">
+
+
+  <header class="myheader" id='header'>
+    <ul id="menu1" class="sidenav collapsible">
+      <li>
+        <div class="collapsible-header"><i class="material-icons">place</i>Coupe verticale</div>
+        <div class="collapsible-body">
+          <span>menu1</span>
+
+        </div>
+      </li>
+    </ul>
+
+    <div id="menu3" class="sidenav">
+
+      <ul class="collapsible">
+
+        <li class="active">
+          <div class="collapsible-header"><i class="material-icons">explore</i><span>Vent</span><span
+              id='cpt_layer_menu_vent' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_vent'>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">grain</i><span>Pluie</span><span
+              id='cpt_layer_menu_precip' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_precip'>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">filter_drama</i><span>Nuages</span><span
+              id='cpt_layer_menu_nuage' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_nuage'>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">wb_sunny</i><span>tempe</span><span
+              id='cpt_layer_menu_tempe' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_tempe'>
+          </div>
+        </li>
+
+        <li>
+          <div class="collapsible-header"><i class="material-icons">local_airport</i><span>aero</span><span
+              id='cpt_layer_menu_aero' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_aero'>
+          </div>
+        </li>
+
+
+
+      </ul>
+
+      <div class='row'>
+        <label class='col s12 center label-title' id='label_choix_run_arome'>Choix du run</label>
+        <div class='col s2' id='switch_run_prevision_arome'></div>
+        <div id='choix_run_arome' class='col s8 center small_span'></div>
+      </div>
+      <hr>
+
+
+      <ul class="collapsible">
+        <li>
+          <div class="collapsible-header"><i class="material-icons">album</i><span>Analyse_generale</span><span
+              id='cpt_layer_menu_analyse_generale' class="cpt_layer badge">0</span></div>
+          <div class="collapsible-body row" id='menu_analyse_generale'>
+          </div>
+        </li>
+      </ul>
+      <div class='row'>
+        <label class='col s12 center label-title' id='label_choix_run_arpege'>Choix du run</label>
+        <div class='col s2' id='switch_run_prevision_arpege'></div>
+        <div id='choix_run_arpege' class='col s8 center small_span'></div>
+      </div>
+    </div>
+    <div id="menu2" class="sidenav row">
+      <div class='input-field col s12'>
+        <select id='select_liste_trajet' onchange ="load_trajet_from_storage($(this).val());">
+        </select>
+        <label></label>
+      </div>
+
+      <div id='menu2_content'>
+
+
+
+      </div>
+<!--
+      <ul class="collapsible expandable">
+        <li>
+          <div class="collapsible-header"><i class="material-icons">location_on</i><span></span></div>
+          <div id="liste_etape" class='collapsible-body col s12'></div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">settings</i><span></span></div>
+          <div class='collapsible-body col s12'>
+
+
+
+          </div>
+        </li>
+      </ul>
+      <div class='row mynav'>
+        <div class='col s6 center'>
+          <a href='#!' onclick="Valider_trajet_oaci();"><i class='mybutton Small material-icons'>check</i></a>
+        </div>
+        <div class='col s6 center'>
+          <a href='#!' onclick="save_trajet_oaci();"><i class='mybutton Small material-icons'>save</i></a>
+        </div>
+
+      </div>
+
+
+-->
+
+    </div>
+    <div id="menu4" class="sidenav collapsible">
+      <li class="active">
+        <div class="collapsible-header"><i class="material-icons">remove_red_eye</i><span>Observationaaa</span><span
+            id='cpt_layer_menu_imagerie' class="cpt_layer badge">0</span></div>
+        <div class="collapsible-body row" id='menu_imagerie'>
+        </div>
+      </li>
+    </div>
+
+    <div id="menu5" class="sidenav ">
+      <h5 id="id_version">Version 1.0</h5>
+      <div id='menu_preference_language' class="input-field col s12">
+        <select onchange="context.set_language($(this).val());load_controller();apply_language();">
+          <option value='fr' selected>Francais</option>
+          <option value='en'>Anglais</option>
+        </select>
+        <label>Choisissez la langue</label>
+      </div>
+      <div id='menu_preference_geo' class="input-field col s12">
+        <select onchange="access_direct($(this).val(),'menu5');">
+          <option value='fr' selected>Métropole</option>
+          <option value='re'>Réunion</option>
+          <option value='my'>Mayotte/option>
+          <option value='ga'>Guadeloupe</option>
+          <option value='ma'>Martinique</option>
+          <option value='gy'>Guyane</option>
+          <option value='po'>Polynésie francaise</option>
+          <option value='nc'>Nouvelle Calédonie</option>
+          <option value='sp'>Saint Pierre et miquelon</option>
+
+
+
+        </select>
+        <label>Choisissez votre zone geographique</label>
+      </div>
+      <div id='menu_preference_repere' class="input-field col s12">
+        <select multiple>
+          <option value="1">Départements</option>
+          <option value="2">Frontières</option>
+          <option value="3">Quadrillage</option>
+          <option value="3">Aéroports</option>
+        </select>
+        <label>choisissez vos reperes geographiques</label>
+      </div>
+    </div>
+
+
+
+    <nav class="mynav">
+      <div class="nav-wrapper">
+        <a href="#" id='titre_small_menu' class="brand-logo center hide-on-med-and-up"></a>
+        <a href="#" data-target="menu3" id="menu_droit"
+          class="sidenav-trigger right show-on-medium-and-up show-on-medium-and-down  "><i
+            class="material-icons mybutton">view_headline</i></a>
+        <ul id="nav-mobile" class="left">
+          <ul id="small_menu" class="dropdown-content">
+            <li><a onclick="choix_mode('coupe_verticale');" href="#!" style="font-size:12px;">Coupe verticale</a></li>
+            <li><a onclick="choix_mode('coupe_trajet') ;" href="#!" style="font-size:12px;">Coupe Trajet</a></li>
+            <li class="divider"></li>
+            <li><a onclick="choix_mode('prevision');" href="#!" style="font-size:12px;">prevision</a></li>
+            <li><a onclick="choix_mode('observation');" href="#!" style="font-size:12px;">observation</a></li>
+            <li class="divider"></li>
+            <li><a onclick="choix_mode('preference');" href="#!" style="font-size:12px;">préference</a></li>
+
+          </ul>
+          <li class="hide-on-small-only"><a onclick="choix_mode('coupe_verticale');" href="#" id='test'><i
+                class="material-icons mybutton left">vertical_align_top</i><label
+                class='white-text hide-on-med-and-down'>Coupe verticale</label></a></li>
+          <li class="hide-on-small-only"><a onclick="choix_mode('coupe_trajet');" href="#"><i
+                class="material-icons mybutton left">timeline</i><label class='white-text hide-on-med-and-down'>Coupe
+                trajet</label></a></li>
+          <li class="hide-on-small-only"><a onclick="choix_mode('prevision');" href="#"><i
+                class="material-icons mybutton red-text left">layers</i><label
+                class='white-text hide-on-med-and-down'>Préaavision</label></a></li>
+          <li class="hide-on-small-only"><a onclick="choix_mode('observation');" href="#"><i
+                class="material-icons mybutton  left">remove_red_eye</i><label
+                class='white-text hide-on-med-and-down'>Observationsss</label></a></li>
+          <li class="hide-on-small-only"><a onclick="choix_mode('preference');" href="#"><i
+                class="material-icons mybutton  left">settings</i><label
+                class='white-text hide-on-med-and-down'>Observationsss</label></a></li>
+
+          <li class="hide-on-med-and-up"><a class="dropdown-trigger" href="#!" data-target="small_menu">Menu<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+
+        </ul>
+
+        <a href="" target="new" id="vigilance_link" class='center hide-on-small-only'><img src="" id='vigilance_picto'
+            height='100%' class='center' alt=""></a>
+      </div>
+    </nav>
+
+  </header>
+
+
+  <main class='main' id='main'>
+
+    <div id="carto" name="carto" style="bottom:0;width:100%;background-color:white;height:100px;">
+
+    </div>
+   
+
+    <div id='container_date'></div>
+    <div id="save_trajet" class="modal">
+      <div class="modal-content">
+        <h4>Donnez un nom a ce trajet</h4>
+        <p><input type='text' id='trajet_name'></p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" onclick="save_trajet_oaci($('#trajet_name').val()); " class="modal-close waves-effect waves-green btn-flat">OK</a>
+      </div>
+    </div>
+  </main>
+  <footer id='footer' class="myfooter" style="height:85px;">
+    <div class='row valign-wrapper'>
+      <div class='col s3 m2 l1 center '>
+        <img src="ressources/images/logo-mf.png" height='85px' class='center ' alt="">
+      </div>
+      <div class='col s9 m10 l11'>
+        <div class='row '>
+          <div class='col s12 center  white-text' id='echeance_string'>dddd</div>
+          <div class='col s1 m1 l1'></div>
+          <div id="slider_echeance" class='col s9 m10 l10'></div>
+
+          <div class='col s2 m1 l1 center'><a onclick="update_context(true);"><i
+                class="material-icons  mybutton">autorenew</i></a></div>
+
+          <div class='col s2 center'><a id='play_first' onclick="slider_animate.first();"><i
+                class="material-icons  mybutton">first_page</i></a></div>
+          <div class='col s2 center'><a id='play_prev' onclick="slider_animate.prev();"><i
+                class="material-icons  mybutton">skip_previous</i></a></div>
+
+          <div class='col s4 center'><a id='play_stop' onclick="$('#play_stop i').text(slider_animate.play_stop());"><i
+                class="material-icons  mybutton">play_arrow</i></a></div>
+
+          <div class='col s2 center'><a id='play_next' onclick="slider_animate.next();"><i
+                class="material-icons  mybutton">skip_next</i></a></div>
+          <div class='col s2 center'><a id='play_last' onclick="slider_animate.end();"><i
+                class="material-icons  mybutton">last_page</i></a></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script type="text/javascript" src="./materialize/js/materialize.min.js"></script>
+  <script type="text/javascript" src="nouislider/nouislider.min.js"></script>
+  <script type="text/javascript" src="nouislider/wNumb.min.js"></script>
+  <script>
+    $(window).resize(function () {
+      resize_window();
+    });
+
+    setInterval(function () { update_context(false); }, 5 * 60 * 1000);
+    $('#Lance_coupe_trajet').hide();
+
+  </script>
+</body>
+
+</html>

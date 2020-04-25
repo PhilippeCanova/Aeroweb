@@ -1,6 +1,6 @@
 <?php
 
-
+/*
 class Metgate {
   public $username = 'mf_pca';
   public $password = 'N45YX3gxc';
@@ -17,7 +17,7 @@ class Metgate {
 }
 
 class Metar {
-  /* Definit un metar à partir de l'élément xml */
+  // Definit un metar à partir de l'élément xml 
   public $params = array();
 
   function __construct($element) {
@@ -85,9 +85,7 @@ echo $response;
               $arr[] = new Metar($la);
 
                   //$jsonla = json_encode($la);
-                  /*foreach ($la->children("LA", TRUE) as $param){
-                      echo $param->getName() . "\n";
-                  }*/
+
 
             }
         }
@@ -105,9 +103,7 @@ echo $response;
         //echo $json;
        // $array = json_decode($json,TRUE);
         //print_r($array);
-        /*foreach (${wfs}FeatureCollection as $character) {
-          echo $character;
-        }*/
+
     }
 
     public function get_last_metar($OACIs) {
@@ -136,7 +132,7 @@ echo $response;
     }
 
 }
-
+*/
 // Décrit paramètres METAR
 // $url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=DescribeFeatureType&typeName=LS_last";
       
@@ -145,6 +141,22 @@ $stations = htmlspecialchars($_GET["stations"]);
 
 $stations = explode(",", $stations);
 
+$username = 'mf_pca';
+$password = 'N45YX3gxc';
+$url = "http://metgate.meteo.fr/broker/wfs/?service=WFS&version=2.0.0&request=DescribeFeatureType&typeName=LS_last";
+echo $url;
+echo '<br>';
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+$response = curl_exec($ch);
+echo $ch;
+echo '<br>';
+echo $response;
+/*
 if ( $message == "METAR") {
   if (!$stations) {
     echo "Paramètre station absent ou mal formé !";
@@ -163,7 +175,7 @@ if ( $message == "METAR") {
   echo "Paramètre message absent ou message non traité !";
   die();
 }
-
+*/
 //LFBA,LFKJ,LFCI,LFJR,LFBU,LFLP,LFLW,LFLA,LFMV,LFKB,LFOB,LFBE,LFMU,LFBZ,LFBD,LFLD,LFRB,LFSL,LFRK,LFCC,LFAC,LFKC,LFMD,LFMK,LFCK,LFOK,LFLB,LFLX,LFRC,LFOU,LFLC,LFGA,LFRG,LFSD,LFRD,LFGJ,LFSG,LFKF,LFLS,LFEY,LFBH,LFRO,LFOV,LFOH,LFRM,LFHP,LFAT,LFQQ,LFBL,LFRH,LFLY,LFLL,LFML,LFHM,LFJL,LFBK,LFMT,LFRU,LFSB,LFRS,LFMN,LFTW,LFBN,LFPG,LFPI,LFPB,LFPO,LFBP,LFBX,LFMP,LFBI,LFKO,LFRQ,LFRN,LFLO,LFDN,LFCR,LFOP,LFRT,LFMH,LFRZ,LFST,LFBT,LFTH,LFBO,LFOT,LFQB,LFLU,LFAV,LFLV,TFFR,TFFF,NTTT,FMEE,SOCA,NWWW
 //http://localhost/metgate/metgate.php?message=METAR&stations=LFSL,LFRK,LFCC,LFAC,LFKC,LFMD,LFMK,LFCK,LFOK,LFLB,LFLX,LFRC,LFOU
 
