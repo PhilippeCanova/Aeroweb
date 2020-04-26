@@ -45,7 +45,7 @@ function vigilance_metropole(latitude = null, longitude = null, zoom = null) {
 	if (zoom == null) zoom = 1;
 	//var extent = [-9, 38.5, 10, 54];
 	var extent = [-70, 20, 45, 70];
-	var contenu = { origin: 'fr', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.com/integration/sim-portail/generated/integration/img/vigilance/mn.gif', text: "<strong>Vigilance<br>France Métropole</strong>", link: 'http://vigilance.meteofrance.com' };
+	var contenu = { origin: 'fr', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.com/integration/sim-portail/generated/integration/img/vigilance/mn.gif', text: "<strong>Vigilance<br>France Métropole</strong>", link: 'http://vigilance.meteofrance.com', masque_vigilance:'masque_metropole.png' };
 	return contenu;
 }
 function vigilance_martinique(latitude = null, longitude = null, zoom = null) {
@@ -54,7 +54,7 @@ function vigilance_martinique(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -61.03;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'ma', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane' };
+	var contenu = { origin: 'ma', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_guadeloupe(latitude = null, longitude = null, zoom = null) {
@@ -63,7 +63,7 @@ function vigilance_guadeloupe(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -61.57;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'ga', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane' };
+	var contenu = { origin: 'ga', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_guyanne(latitude = null, longitude = null, zoom = null) {
@@ -72,7 +72,7 @@ function vigilance_guyanne(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -53.13;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'gy', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane' };
+	var contenu = { origin: 'gy', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_reunion(latitude = null, longitude = null, zoom = null) {
@@ -81,7 +81,7 @@ function vigilance_reunion(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = 55.53;
 	if (zoom == null) zoom = 8;
 	var extent = [43, -26, 66, -15];
-	var contenu = { origin: 're', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV97_FMEE_.png', text: "<strong>Vigilance<br>La Réunion</strong>", link: 'http://www.meteofrance.re/vigilance-reunion' };
+	var contenu = { origin: 're', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV97_FMEE_.png', text: "<strong>Vigilance<br>La Réunion</strong>", link: 'http://www.meteofrance.re/vigilance-reunion', masque_vigilance:'masque_reunion.png' };
 	return contenu;
 }
 function vigilance_mayotte(latitude = null, longitude = null, zoom = null) {
@@ -91,7 +91,7 @@ function vigilance_mayotte(latitude = null, longitude = null, zoom = null) {
 	if (zoom == null) zoom = 11;
 	var extent = [44, -13.20, 46, -12];
 
-	var contenu = { origin: 'my', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV98_FMEE_.png', text: "<strong>Vigilance<br>Mayotte</strong>", link: 'http://www.meteofrance.yt/vigilance-mayotte' };
+	var contenu = { origin: 'my', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV98_FMEE_.png', text: "<strong>Vigilance<br>Mayotte</strong>", link: 'http://www.meteofrance.yt/vigilance-mayotte', masque_vigilance:'masque_mayotte.png' };
 	return contenu;
 }
 function vigilance_nouvelle_caledonie(latitude = null, longitude = null, zoom = null) {
@@ -101,7 +101,7 @@ function vigilance_nouvelle_caledonie(latitude = null, longitude = null, zoom = 
 	if (zoom == null) zoom = 8;
 	var extent = [130, -45, 180, -11];
 
-	var contenu = { origin: 'nc', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteo.nc/prod/vigilance/timbre_VIGI02PROD.png', text: "<strong>Vigilance<br>Nouvelle Calédonie</strong>", link: 'http://www.meteo.nc/vigilance/accueil.php' };
+	var contenu = { origin: 'nc', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteo.nc/prod/vigilance/timbre_VIGI02PROD.png', text: "<strong>Vigilance<br>Nouvelle Calédonie</strong>", link: 'http://www.meteo.nc/vigilance/accueil.php', masque_vigilance:'masque_NC.png' };
 	return contenu;
 }
 function vigilance_polynesie(latitude = null, longitude = null, zoom = null) {
@@ -113,7 +113,7 @@ function vigilance_polynesie(latitude = null, longitude = null, zoom = null) {
 
 	var extent = [-161, -25, -134, -9];
 
-	var contenu = { origin: 'po', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://meteo.pf/sites/default/files/meteo_data/bulletins/cartes/mini_vigilance.png', text: "<strong>Vigilance<br>Polynesie francaise</strong>", link: 'https://meteo.pf/fr/vigilance-meteo' };
+	var contenu = { origin: 'po', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://meteo.pf/sites/default/files/meteo_data/bulletins/cartes/mini_vigilance.png', text: "<strong>Vigilance<br>Polynesie francaise</strong>", link: 'https://meteo.pf/fr/vigilance-meteo', masque_vigilance:'masque_pf.png' };
 
 	return contenu;
 }
@@ -126,7 +126,7 @@ function vigilance_saint_pierre_et_miquelon(latitude = null, longitude = null, z
 	if (zoom == null) zoom = 10;
 	var extent = [-59, 45, -52, 48];
 
-	var contenu = { origin: 'sp', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.pm/commun/vigilance.png', text: "<strong>Vigilance<br>Saint Pierre et Miquelon</strong>", link: 'http://www.meteofrance.pm/vigi.php' };
+	var contenu = { origin: 'sp', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.pm/commun/vigilance.png', text: "<strong>Vigilance<br>Saint Pierre et Miquelon</strong>", link: 'http://www.meteofrance.pm/vigi.php', masque_vigilance:'masque_SPM.png' };
 
 	return contenu;
 }
@@ -165,6 +165,7 @@ function localisation_is_checked(loc) {
 
 	$('#vigilance_picto').attr('src', localisation.picto);
 	$('#vigilance_link').attr('href', localisation.link);
+	$('#vigilance_picto_masque').attr('src', './ressources/images/' + localisation.masque_vigilance);
 
 	context.update(localisation.origin);
 	if (mymap == null && slider_animate == null) {
