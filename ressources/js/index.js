@@ -232,7 +232,7 @@ function maj_cpt_layer(menu_id) {
 	var sur = $('#' + menu_id + " div label input").length;
 	//var t = cpt + "/" + sur + " " + $_layer;
 	var t = cpt;
-	if (cpt > 1) t += 's';
+	//if (cpt > 1) t += 's';
 
 	$('#cpt_layer_' + menu_id).text(t);
 
