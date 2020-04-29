@@ -65,6 +65,10 @@ class map_Controler {
 		**      Traçage des coupe trajet
 		*/
 		this.sourceLine = new ol.source.Vector({ wrapX: false });
+		var feature = new ol.Feature({
+			geometry: new ol.geom.LineString([[0,0], [1,1]]),
+		  });
+		  this.sourceLine.addFeature(feature);
 		this.layerLine = new ol.layer.Vector({
 			source: this.sourceLine,
 			zIndex: 200,

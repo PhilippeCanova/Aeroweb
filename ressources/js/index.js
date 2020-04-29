@@ -1139,7 +1139,6 @@ function apply_language() {
 }
 function maj_liste_trajet_enregistre(name = "") {
 
-
 	$('#menu2 div:eq( 0 ) select').children('option').remove();
 
 
@@ -1161,7 +1160,7 @@ function maj_liste_trajet_enregistre(name = "") {
 
 
 		//|| !mymap.sourceLine.getFeatures()[0]
-		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0]) {
+		if (t.length == 0) {// || !mymap.sourceLine.getFeatures()[0]) {
 			$('#menu2 div:eq( 0 ) select').append($('<option>', {
 				value: '',
 				diabled: true,
@@ -1175,7 +1174,8 @@ function maj_liste_trajet_enregistre(name = "") {
 			$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
 			$.each(t, function (k, v) {
 
-
+//console.log(v);
+//console.log(k);
 				let obj = { value: k, text: v.name };
 				if (v.name == name) obj['selected'] = true;
 				$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
@@ -1187,9 +1187,9 @@ function maj_liste_trajet_enregistre(name = "") {
 	$('select').formSelect();
 }
 function load_trajet_from_storage(index) {
+	
 	if (coupe_trajet_en_cours == null) {
 		coupe_trajet_en_cours = new coupe_trajet_Controller([], "menu2_content");
-
 	}
 	coupe_trajet_en_cours.load_from_storage(index);
 	Valider_trajet_oaci()
@@ -1320,7 +1320,9 @@ function get_oaci(me) {
 	}
 }
 function Valider_trajet_oaci() {
+
 	var feature = mymap.sourceLine.getFeatures()[0];
+console.log(feature);
 
 	let coords_tracage = [];
 	let coords = [];
