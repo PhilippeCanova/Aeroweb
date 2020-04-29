@@ -148,3 +148,9 @@ border-radius: 3px;
 	
 	background-color: rgb(18, 120, 151);
 }
+.modal_trajet  {
+
+	max-height: 100%;
+	height:100%;
+	width:100%;
+}

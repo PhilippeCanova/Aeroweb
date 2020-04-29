@@ -4,7 +4,7 @@ class map_Controler {
 
 		this.etat = "0";
 		this.target = target;
-		this.nb_point_max=5;
+		this.nb_point_max = 5;
 		var mousePositionControl = new ol.control.MousePosition({
 			coordinateFormat: ol.coordinate.createStringXY(4),
 			projection: 'EPSG:4326',
@@ -91,14 +91,14 @@ class map_Controler {
 			maxPoints: this.nb_point_max
 
 		});
-		let me =this;
-		this.modifyLine = new ol.interaction.Modify({ 
-			source: this.sourceLine ,
-			
-			insertVertexCondition: function() {
-				return (me.sourceLine.getFeatures()[0].getGeometry().getCoordinates().length <me.nb_point_max);
-				
-				
+		let me = this;
+		this.modifyLine = new ol.interaction.Modify({
+			source: this.sourceLine,
+
+			insertVertexCondition: function () {
+				return (me.sourceLine.getFeatures()[0].getGeometry().getCoordinates().length < me.nb_point_max);
+
+
 			}
 		});
 
@@ -154,15 +154,84 @@ class map_Controler {
 				url: 'https://aviation.meteo.fr/dmap-carto/aeroweb-vfr/level{z}/y{y}/x{x}.png'
 
 			})
-		  })
+		})
+		this.departement = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'https://aviation.meteo.fr/wms/tile/vector.departement/{z}/{y}/{x}.png'
 
+			}),
+			opacity: 1,
+			tag: 'repere',
+			id: 'departement',
+			visible: true,
+			zIndex: 100
+		})
+		this.country = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'https://aviation.meteo.fr/wms/tile/vector.country/{z}/{y}/{x}.png'
 
+			}),
+			opacity: 1,
+			tag: 'repere',
+			id: 'country',
+			visible: false,
+			zIndex: 101
+		})
+		this.graticule = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'https://aviation.meteo.fr/wms/tile/vector.graticule/{z}/{y}/{x}.png'
+
+			}),
+			opacity: 1,
+			tag: 'repere',
+			id: 'graticule',
+			visible: false,
+			zIndex: 102
+		})
+		this.crna_airports = new ol.layer.Tile({
+			source: new ol.source.XYZ({
+				url: 'https://aviation.meteo.fr/wms/tile/vector.crna_airports/{z}/{y}/{x}.png'
+
+			}),
+			opacity: 1,
+			tag: 'repere',
+			id: 'airport',
+			visible: false,
+			zIndex: 103
+		})
+		/*
+		var url="http://aviation.meteo.fr/wms/vertical-section/path/48.09275716032735/-3.5375976562499996/46.9502622421856/0.7910156250000014/1588075200/1/100/hu,uv_alt";
+		var extent = [5, 40, -5, 40+(10/1.88)];
+		var projection = new ol.proj.Projection({
+			code: 'xkcd-image',
+			units: 'pixels',
+			extent: ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+		});
+
+		this.coupe_trajet =new ol.layer.Image({
+			source: new ol.source.ImageStatic({
+				url: url,
+				//projection: projection,
+				crossOrigin: null,
+        		imageExtent: ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+			}),
+			opacity: 1,
+			tag: 'coupe',
+			id: 'couche_1',
+			visible: true,
+			zIndex: 200
+		})
+*/
 		//this.mymap.addLayer(this.osm_layer);
+		
 		this.mymap.addLayer(this.fond);
 		this.mymap.addLayer(this.layerPoint);
 		this.mymap.addLayer(this.layerLine);
-
-
+		this.mymap.addLayer(this.departement);
+		this.mymap.addLayer(this.country);
+		this.mymap.addLayer(this.graticule);
+		this.mymap.addLayer(this.crna_airports);
+		//this.mymap.addLayer(this.coupe_trajet);
 		var x = this.mymap
 		this.mymap.on('rendercomplete', function (evt) {
 			x.etat = '1';
@@ -270,10 +339,10 @@ class map_Controler {
 	}
 
 	delete() {
-		
+
 		var layerArray, len, layer;
 		layerArray = this.mymap.getLayers().getArray(),
-		len = layerArray.length;
+			len = layerArray.length;
 		while (len > 0) {
 			layer = layerArray[len - 1];
 			this.mymap.removeLayer(layer);

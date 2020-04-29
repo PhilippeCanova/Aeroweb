@@ -66,7 +66,7 @@
           <div class="collapsible-body row" id='menu_precip'>
           </div>
         </li>
-        
+
         <li>
           <div class="collapsible-header"><i class="material-icons">wb_sunny</i><span>tempe</span><span
               id='cpt_layer_menu_tempe' class="cpt_layer badge">0</span></div>
@@ -74,7 +74,7 @@
           </div>
         </li>
 
-        
+
 
 
 
@@ -104,7 +104,7 @@
     </div>
     <div id="menu2" class="sidenav row">
       <div class='input-field col s12'>
-        <select id='select_liste_trajet' onchange ="load_trajet_from_storage($(this).val());">
+        <select id='select_liste_trajet' onchange="load_trajet_from_storage($(this).val());">
         </select>
         <label></label>
       </div>
@@ -114,33 +114,7 @@
 
 
       </div>
-<!--
-      <ul class="collapsible expandable">
-        <li>
-          <div class="collapsible-header"><i class="material-icons">location_on</i><span></span></div>
-          <div id="liste_etape" class='collapsible-body col s12'></div>
-        </li>
-        <li>
-          <div class="collapsible-header"><i class="material-icons">settings</i><span></span></div>
-          <div class='collapsible-body col s12'>
 
-
-
-          </div>
-        </li>
-      </ul>
-      <div class='row mynav'>
-        <div class='col s6 center'>
-          <a href='#!' onclick="Valider_trajet_oaci();"><i class='mybutton Small material-icons'>check</i></a>
-        </div>
-        <div class='col s6 center'>
-          <a href='#!' onclick="save_trajet_oaci();"><i class='mybutton Small material-icons'>save</i></a>
-        </div>
-
-      </div>
-
-
--->
 
     </div>
     <div id="menu4" class="sidenav collapsible">
@@ -179,11 +153,12 @@
         <label>Choisissez votre zone geographique</label>
       </div>
       <div id='menu_preference_repere' class="input-field col s12">
-        <select multiple>
-          <option value="1">Départements</option>
-          <option value="2">Frontières</option>
-          <option value="3">Quadrillage</option>
-          <option value="3">Aéroports</option>
+        <select multiple
+          onchange="mymap.set_all_layer_invisible(['repere']);$.each($(this).formSelect('getSelectedValues'),function(k,v){mymap.set_layer_visible(v);}); ">
+          <option value="departement" selected>Départements</option>
+          <option value="country">Frontières</option>
+          <option value="graticule">Quadrillage</option>
+          <option value="airport">Aéroports</option>
         </select>
         <label>choisissez vos reperes geographiques</label>
       </div>
@@ -195,7 +170,7 @@
       <div class="nav-wrapper">
 
         <a href="" target="new" id="vigilance_link" class='center hide-on-small-only'><img src="" id='vigilance_picto'
-          height='100%' class='left' alt="">
+            height='100%' class='left' alt="">
           <img src="" id='vigilance_picto_masque' height='100%' class='left' alt=""></a>
 
         <a href="#" id='titre_small_menu' class="brand-logo center hide-on-med-and-up"></a>
@@ -208,18 +183,18 @@
             <li><a onclick="choix_mode('prevision');" href="#!" style="font-size:12px;">prevision</a></li>
             <li class="divider"></li>
             <li><a onclick="choix_mode('coupe_verticale');" href="#!" style="font-size:12px;">Coupe terrain</a></li>
-            <li><a onclick="choix_mode('coupe_trajet') ;" href="#!" style="font-size:12px;">Coupe Trajet</a></li>           
+            <li><a onclick="choix_mode('coupe_trajet') ;" href="#!" style="font-size:12px;">Coupe Trajet</a></li>
             <li class="divider"></li>
             <li><a onclick="choix_mode('preference');" href="#!" style="font-size:12px;">préference</a></li>
           </ul>
 
           <li class="hide-on-small-only"><a onclick="choix_mode('observation');" href="#"><i
                 class="material-icons mybutton  left">remove_red_eye</i><label
-                class='white-text hide-on-med-and-down'>Observations</label></a></li>   
+                class='white-text hide-on-med-and-down'>Observations</label></a></li>
 
           <li class="hide-on-small-only"><a onclick="choix_mode('prevision');" href="#"><i
                 class="material-icons mybutton red-text left">layers</i><label
-                class='white-text hide-on-med-and-down'>Prévision</label></a></li>      
+                class='white-text hide-on-med-and-down'>Prévision</label></a></li>
 
           <li class="hide-on-small-only"><a onclick="choix_mode('coupe_verticale');" href="#" id='test'><i
                 class="material-icons mybutton left">vertical_align_top</i><label
@@ -238,7 +213,7 @@
 
         </ul>
 
-        
+
       </div>
     </nav>
 
@@ -250,7 +225,7 @@
     <div id="carto" name="carto" style="bottom:0;width:100%;background-color:white;height:100px;">
 
     </div>
-   
+
 
     <div id='container_date'></div>
     <div id="save_trajet" class="modal">
@@ -259,9 +234,33 @@
         <p><input type='text' id='trajet_name'></p>
       </div>
       <div class="modal-footer">
-        <a href="#!" onclick="save_trajet_oaci($('#trajet_name').val()); " class="modal-close waves-effect waves-green btn-flat">OK</a>
+        <a href="#!" onclick="save_trajet_oaci($('#trajet_name').val()); "
+          class="modal-close waves-effect waves-green btn-flat">OK</a>
       </div>
     </div>
+    <div id="vue_trajet" class="modal modal_trajet">
+      <div class="modal-content" id='vue_trajet_ol' style='padding:0px;height:100%;'>
+
+      </div>
+
+     <a style="position:absolute;top:0px; left:0px;" href="#!" onclick="$('#vue_trajet').modal('close');"> <i class="material-icons">close</i></a>
+     <a style="position:absolute;top:0px; right:0px;" href="#!" id='coupe_trajet_to_window' > <i class="material-icons">web_asset</i></a>
+
+     <div id='title_coupe_trajet' class ='center-align' style="position:absolute;  top:0px; left:20px;" ></div>
+     <div id='wait_coupe_trajet' class="preloader-wrapper big active" style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;" >
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
   </main>
   <footer id='footer' class="myfooter" style="height:85px;">
     <div class='row valign-wrapper'>

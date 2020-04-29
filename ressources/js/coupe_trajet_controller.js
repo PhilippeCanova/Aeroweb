@@ -19,6 +19,7 @@ class coupe_trajet_Controller {
         this.parametres = { hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, iso_hcl: false, uv_alt: true };
         this.duree = 1000 * 60 * 60;
         this.fl = '100';
+        this.depart= null;
         this.render();
 
 
@@ -71,6 +72,7 @@ class coupe_trajet_Controller {
             this.parametres = t.parametres;
             this.duree = t.duree;
             this.fl = t.fl;
+            
             this.render();
         }
 
@@ -87,19 +89,21 @@ class coupe_trajet_Controller {
         }
         else {
 
+          
 
             var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet'));
-
+            
 
 
             let i = 0;
 
             $.each(t, function (k, v) {
                 i = k;
-                if (v.name == name) { return; }
+                
+                if (v.name == name) {  return false; }
                 i++;
             });
-
+           
             t.splice(i, 1, this);
         }
 
@@ -277,7 +281,7 @@ class coupe_trajet_Controller {
 
             html += "<div class='row mynav'>";
             html += "<div class='col s6 center'>";
-            html += " <a href='#!' onclick=\"Valider_trajet_oaci();\"><i class='mybutton Small material-icons'>check</i></a>";
+            html += " <a href='#!' onclick=\"if (Valider_trajet_oaci()) $('#vue_trajet').modal('open');\"><i class='mybutton Small material-icons'>check</i></a>";
             html += "</div>";
             html += "<div class='col s6 center'>";
             html += "<a class='modal-trigger' href='#save_trajet' ><i class='mybutton Small material-icons'>save</i></a>";
@@ -322,7 +326,7 @@ class coupe_trajet_Controller {
             dateSlider.noUiSlider.on('update', function (values, handle) {
                 dateValues[handle].innerHTML = formatdateutcshort(new Date(+values[handle]));
                 me.duree = +values[1] - values[0]
-
+                me.depart = values[0];
             });
 
             $.each(this.etapes, function (key, c) {

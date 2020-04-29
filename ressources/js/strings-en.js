@@ -128,10 +128,19 @@ $_tke = "TKE";
 $_hcl = "Boundary limit height (m)";
 $_uv_alt = "Upper wind";
 $_choix_parametre_trajet = "Choose your settings";
+$_choix_trajet = "Choose your route";
+$_donne_nom_trajet = "Give a name to this route";
 $_liste_trajets_enregistres = "List of recorded route";
 
 $_trajet = "Route";
 $_niveau_de_vol = "Maximum Fligh level :";
+
+$_N = "N";
+$_S = "S";
+$_E = "E";
+$_O = "W";
+$_symbol_degre = "°";
+
 $_title_hires = '<b>High resolution forecasts </b>';
 $_title_hires_notice = '(instructions about fields model forecast)';
 $_title_polynesie_notice = 'Legend';

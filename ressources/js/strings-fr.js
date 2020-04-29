@@ -126,9 +126,17 @@ $_tke = "TKE";
 $_hcl = "Hauteur Couche Limite (m)";
 $_uv_alt = "Vent altitude";
 $_choix_parametre_trajet = "Choisissez vos parametres";
+$_choix_trajet = "Choisissez un trajet";
+$_donne_nom_trajet = "Donnz un nom à ce trajet";
 $_liste_trajets_enregistres = "Liste des trajets enregistrés";
 $_trajet = "Trajet";
 $_niveau_de_vol = "Niveau de vol maximum :";
+$_N = "N";
+$_S = "S";
+$_E = "E";
+$_O = "O";
+$_symbol_degre = "°";
+
 $_title_hires = '<b>Prévisions modèle maille fine </b>';
 $_title_hires_notice = '(notice sur les champs)';
 $_title_polynesie_notice = 'Légende';
