@@ -1,0 +1,132 @@
+
+
+ body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+  
+
+ 
+.myfooter {
+	
+	position:fixed;
+bottom:0;
+left:0;
+	width:100%;
+	background-color:rgba(9, 82, 128, 1);
+}
+.mynav {
+	background-color:rgba(9, 82, 128, 1);	
+}
+.mybutton
+{
+cursor:pointer;
+border-radius:5px;
+color:white;
+}
+.mybutton:hover
+{
+	background-color:grey;
+}
+.small_span
+{
+font: 400 10px Arial;
+color: #888;
+display: block;
+margin: 0px 0;
+}
+span.badge.cpt_layer{
+	font-weight: 300;
+	font-size: 0.8rem;
+	color: #fff;
+	background-color: #26a69a;
+	border-radius: 5px;
+}
+span.cpt_layer {
+	min-width: 1.5rem;
+}
+.sidenav-overlay {
+	background-color: rgba(0,0,0,0.2);
+	/*display: none !important; */
+}
+#vigilance_picto_masque {
+	position: absolute;
+	left: 0px;
+}
+
+.select-dropdown{
+	color:grey;
+
+}
+ul.dropdown-content.select-dropdown li span {
+	color: grey;
+
+}
+
+.label-title
+{
+color: grey;
+display: block;
+margin: 0px 0px 15px 0px;
+}
+
+.etape{
+	
+	
+	text-transform:uppercase;
+}
+.etape_ok{
+	color:black;
+	background-color: white	;
+}
+.etape_erreur{
+	color:white;
+	background-color: rgb(189, 14, 14)	;
+}
+.Tiny{
+	font-size: 1rem;
+}
+.Small{
+	font-size: 2rem;
+}
+.Medium{
+	font-size: 4rem;
+}
+.Large{
+	font-size: 6rem;
+}
+.noUi-horizontal {
+	height: 15px;
+}
+
+.noUi-handle::after,
+.noUi-handle::before {
+
+	width: 1px;
+
+}
+.noUi-handle{
+border-radius: 3px;
+}
+.noUi-horizontal .noUi-handle,
+.noUi-vertical .noUi-handle {
+	
+	background-color: rgb(18, 120, 151);
+}
+.modal_trajet  {
+
+	max-height: 100%;
+	height:100%;
+	width:100%;
+}
+.modal_terrain  {
+
+	max-height: 100%;
+	height:100%;
+	width:100%;
+}
