@@ -6,23 +6,121 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="nouislider/nouislider.min.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
-
+  <link type="text/css" rel="stylesheet" href="ol/ol.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="jquery/jquery-3.1.1.min.js"></script>
+  <script src="ressources/js/jquery-localisation.min.js" type="text/javascript" type="text/javascript"></script>
+  <script type="text/javascript" src="ol/ol.js"></script>
   <script>
+function test(){
+  
+  $('#vue_trajet').modal('open');
+}
+function onload(){
+  $(document).ready(function () {
+		$('select').formSelect();
+		$('.sidenav').sidenav({ edge: 'right', draggable: false });
+		$('.collapsible').collapsible();
+		$('.fixed-action-btn').floatingActionButton({ direction: 'left' });
+		$(".dropdown-trigger").dropdown();
+    //$('.modal').modal();
     
+		$('#vue_trajet').modal({onOpenEnd:function(){
+			$('#vue_trajet_ol').html('');
+			var extent = [0, 0, 774, 649];
+			var projection = new ol.proj.Projection({
+				code: 'xkcd-image',
+				units: 'pixels',
+				extent: extent
+			  });
+			  
+			var map = new ol.Map({
+				target: 'vue_trajet_ol',
+				layers: [
+					new ol.layer.Image({
+						source: new ol.source.ImageStatic({
+						  url: 'http://aviation.meteo.fr/wms/vertical-section/path/48.82133254964663/-2.0434570312499996/47.561700754519734/0.35156250000000083/1588075200/1/100/hu,uv_alt?v=0.6111933116089481',
+              projection: projection,
+              crossOrigin : null,
+						  imageExtent: extent
+						}),
+						
+					})
+				],
+				view: new ol.View({
+				  projection: projection,
+				  center: ol.extent.getCenter(extent),
+				  zoom: 2,
+				  maxZoom: 8
+				})
+			  });
+
+    }});
+    
+	});
+}
   </script>
 </head>
 
-<body onload="M.AutoInit();">
-
-
-      Guess the arrival time: <input type="time" value='12:00' name="arrivaltime" min="12:00" max="18:00" step="600">
-      <input type="submit" value="Send data">
+<body onload="onload();">
 
   
 
-      <script type="text/javascript" src="./materialize/js/materialize.min.js"></script>
-      <script type="text/javascript" src="nouislider/nouislider.min.js"></script>
-      <script type="text/javascript" src="nouislider/wNumb.min.js"></script>
+  <div id="vue_trajet" class="modal" style='height:100%';>
+    <div class="modal-content">
+      <div id='vue_trajet_ol' style='height:500px;'>
+
+      </div>
+      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" onclick="" class="modal-close waves-effect waves-green btn-flat">OK</a>
+    </div>
+  </div>
+  <div id='vue_trajet_ol1' style='height:500px;'>
+
+  </div>
+  <a href="#!" onclick="test()">dsqqs</a>
+  <script type="text/javascript" src="./materialize/js/materialize.min.js"></script>
+  <script type="text/javascript" src="nouislider/nouislider.min.js"></script>
+  <script type="text/javascript" src="nouislider/wNumb.min.js"></script>
+
+  <script>
+
+
+/*
+    $('#vue_trajet_ol').html('');
+    var extent = [0, 0, 863, 458];
+    var projection = new ol.proj.Projection({
+      code: 'xkcd-image',
+      units: 'pixels',
+      extent: extent
+    });
+
+    var map = new ol.Map({
+      target: 'vue_trajet_ol',
+      layers: [
+        new ol.layer.Image({
+          source: new ol.source.ImageStatic({
+            url: './test_theta.png',
+            projection: projection,
+            imageExtent: extent
+          }),
+
+        })
+      ],
+      view: new ol.View({
+        projection: projection,
+        center: ol.extent.getCenter(extent),
+        zoom: 2,
+        maxZoom: 8
+      })
+    });
+
+*/
+
+  </script>
 </body>
 
-</html> 
+</html>

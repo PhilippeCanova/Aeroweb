@@ -5,16 +5,17 @@ var slider_run_arome = null;
 var slider_run_arpege = null;
 
 var coupe_trajet_en_cours = null;
+var coupe_terrain_en_cours = null;
 
 var version = '1.0';
 var context = new context_Controller();
 
-hpa_fl = {  '300':'300', '350':'265', '400':'240', '450':'210', '500':'180', '550':'160', 
-			'600':'140','650':'120', '700':'100', '750':'080', '800':'065', '850':'050', 
-			'900':'045', '925':'035', '950':'025', '1000': '005'}
+hpa_fl = {
+	'300': '300','350': '270','400': '240','450': '210','500': '180','550': '160','600': '140','650': '120','700': '100','750': '80', '800': '65', '850': '50', '900': '30', '925': '27', '950': '20', '1000': '5'
+}
 
-function get_hPa_by_FL (value) {
-	if (typeof(hpa_fl[value]) == 'undefined') { return ''; }
+function get_hPa_by_FL(value) {
+	if (typeof (hpa_fl[value]) == 'undefined') { return ''; }
 	return ' - FL ' + hpa_fl[value];
 };
 
@@ -45,7 +46,7 @@ function vigilance_metropole(latitude = null, longitude = null, zoom = null) {
 	if (zoom == null) zoom = 1;
 	//var extent = [-9, 38.5, 10, 54];
 	var extent = [-70, 20, 45, 70];
-	var contenu = { origin: 'fr', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.com/integration/sim-portail/generated/integration/img/vigilance/mn.gif', text: "<strong>Vigilance<br>France Métropole</strong>", link: 'http://vigilance.meteofrance.com', masque_vigilance:'masque_metropole.png' };
+	var contenu = { origin: 'fr', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.com/integration/sim-portail/generated/integration/img/vigilance/mn.gif', text: "<strong>Vigilance<br>France Métropole</strong>", link: 'http://vigilance.meteofrance.com', masque_vigilance: 'masque_metropole.png' };
 	return contenu;
 }
 function vigilance_martinique(latitude = null, longitude = null, zoom = null) {
@@ -54,7 +55,7 @@ function vigilance_martinique(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -61.03;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'ma', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
+	var contenu = { origin: 'ma', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance: 'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_guadeloupe(latitude = null, longitude = null, zoom = null) {
@@ -63,7 +64,7 @@ function vigilance_guadeloupe(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -61.57;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'ga', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
+	var contenu = { origin: 'ga', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance: 'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_guyanne(latitude = null, longitude = null, zoom = null) {
@@ -72,7 +73,7 @@ function vigilance_guyanne(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = -53.13;
 	if (zoom == null) zoom = 6;
 	var extent = [-86, -30, -32, 34];
-	var contenu = { origin: 'gy', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance:'masque_guadeloupe.png' };
+	var contenu = { origin: 'gy', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV99_TFFF_.png', text: "<strong>Vigilance<br>Antilles-Guyane</strong>", link: 'http://www.meteofrance.gp/vigilance-antilles-guyane', masque_vigilance: 'masque_guadeloupe.png' };
 	return contenu;
 }
 function vigilance_reunion(latitude = null, longitude = null, zoom = null) {
@@ -81,7 +82,7 @@ function vigilance_reunion(latitude = null, longitude = null, zoom = null) {
 	if (longitude == null) longitude = 55.53;
 	if (zoom == null) zoom = 8;
 	var extent = [43, -26, 66, -15];
-	var contenu = { origin: 're', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV97_FMEE_.png', text: "<strong>Vigilance<br>La Réunion</strong>", link: 'http://www.meteofrance.re/vigilance-reunion', masque_vigilance:'masque_reunion.png' };
+	var contenu = { origin: 're', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV97_FMEE_.png', text: "<strong>Vigilance<br>La Réunion</strong>", link: 'http://www.meteofrance.re/vigilance-reunion', masque_vigilance: 'masque_reunion.png' };
 	return contenu;
 }
 function vigilance_mayotte(latitude = null, longitude = null, zoom = null) {
@@ -91,7 +92,7 @@ function vigilance_mayotte(latitude = null, longitude = null, zoom = null) {
 	if (zoom == null) zoom = 11;
 	var extent = [44, -13.20, 46, -12];
 
-	var contenu = { origin: 'my', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV98_FMEE_.png', text: "<strong>Vigilance<br>Mayotte</strong>", link: 'http://www.meteofrance.yt/vigilance-mayotte', masque_vigilance:'masque_mayotte.png' };
+	var contenu = { origin: 'my', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV98_FMEE_.png', text: "<strong>Vigilance<br>Mayotte</strong>", link: 'http://www.meteofrance.yt/vigilance-mayotte', masque_vigilance: 'masque_mayotte.png' };
 	return contenu;
 }
 function vigilance_nouvelle_caledonie(latitude = null, longitude = null, zoom = null) {
@@ -101,7 +102,7 @@ function vigilance_nouvelle_caledonie(latitude = null, longitude = null, zoom = 
 	if (zoom == null) zoom = 8;
 	var extent = [130, -45, 180, -11];
 
-	var contenu = { origin: 'nc', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteo.nc/prod/vigilance/timbre_VIGI02PROD.png', text: "<strong>Vigilance<br>Nouvelle Calédonie</strong>", link: 'http://www.meteo.nc/vigilance/accueil.php', masque_vigilance:'masque_NC.png' };
+	var contenu = { origin: 'nc', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteo.nc/prod/vigilance/timbre_VIGI02PROD.png', text: "<strong>Vigilance<br>Nouvelle Calédonie</strong>", link: 'http://www.meteo.nc/vigilance/accueil.php', masque_vigilance: 'masque_NC.png' };
 	return contenu;
 }
 function vigilance_polynesie(latitude = null, longitude = null, zoom = null) {
@@ -113,7 +114,7 @@ function vigilance_polynesie(latitude = null, longitude = null, zoom = null) {
 
 	var extent = [-161, -25, -134, -9];
 
-	var contenu = { origin: 'po', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://meteo.pf/sites/default/files/meteo_data/bulletins/cartes/mini_vigilance.png', text: "<strong>Vigilance<br>Polynesie francaise</strong>", link: 'https://meteo.pf/fr/vigilance-meteo', masque_vigilance:'masque_pf.png' };
+	var contenu = { origin: 'po', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://meteo.pf/sites/default/files/meteo_data/bulletins/cartes/mini_vigilance.png', text: "<strong>Vigilance<br>Polynesie francaise</strong>", link: 'https://meteo.pf/fr/vigilance-meteo', masque_vigilance: 'masque_pf.png' };
 
 	return contenu;
 }
@@ -126,7 +127,7 @@ function vigilance_saint_pierre_et_miquelon(latitude = null, longitude = null, z
 	if (zoom == null) zoom = 10;
 	var extent = [-59, 45, -52, 48];
 
-	var contenu = { origin: 'sp', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.pm/commun/vigilance.png', text: "<strong>Vigilance<br>Saint Pierre et Miquelon</strong>", link: 'http://www.meteofrance.pm/vigi.php', masque_vigilance:'masque_SPM.png' };
+	var contenu = { origin: 'sp', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://www.meteofrance.pm/commun/vigilance.png', text: "<strong>Vigilance<br>Saint Pierre et Miquelon</strong>", link: 'http://www.meteofrance.pm/vigi.php', masque_vigilance: 'masque_SPM.png' };
 
 	return contenu;
 }
@@ -139,6 +140,188 @@ function init_materialize() {
 		$('.fixed-action-btn').floatingActionButton({ direction: 'left' });
 		$(".dropdown-trigger").dropdown();
 		$('.modal').modal();
+		$('#save_trajet').modal({
+			onOpenEnd: function () {
+				let Title = $_donne_nom_trajet;
+				$('#save_trajet h4').html(Title);
+				Title = "(" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
+				$('#save_trajet input').val(Title);
+			}
+		});
+		$('#save_terrain').modal({
+			onOpenEnd: function () {
+				let Title = $_donne_nom_terrain;
+				$('#save_terrain h4').html(Title);
+				Title = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				$('#save_terrain input').val(Title);
+			}
+		});
+		$('#vue_trajet').modal({
+			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
+				$('#vue_trajet_ol').html('');
+
+				var extent = [0, 0, 774, 649];
+				var projection = new ol.proj.Projection({
+					code: 'xkcd-image',
+					units: 'pixels',
+					extent: extent
+				});
+
+
+				//if (coupe_trajet_en_cours.name=="En cours") {
+				coupe_trajet_en_cours.name = "(" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
+				//}
+				$('#title_coupe_trajet').html(coupe_trajet_en_cours.name);
+
+
+
+
+				//var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
+				var url = '';
+				url += coupe_trajet_en_cours.etapes[0].lat + "/" + coupe_trajet_en_cours.etapes[0].lon + "/";
+				url += coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lat + "/" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lon + "/";
+				url += coupe_trajet_en_cours.depart / 1000 + '/' + coupe_trajet_en_cours.duree / (1000 * 60 * 60) + '/';
+				url += coupe_trajet_en_cours.fl + '/';
+				let p = '';
+				$.each(coupe_trajet_en_cours.parametres, function (k, v) {
+					if (p != '' && v) p += "," + k;
+					else if (p == '' && v) p += k;
+				});
+				url += p;
+				$('#coupe_trajet_to_window').off('click');
+				$('#coupe_trajet_to_window').on('click', function () {
+					newwindow("coupe_trajet.php?name=" + coupe_trajet_en_cours.name + "&url=" + url + "&language=" + context.language,coupe_trajet_en_cours.name);
+					$('#vue_trajet').modal('close');
+				});
+
+
+				var source = new ol.source.ImageStatic({
+					url: 'https://aviation.meteo.fr/wms/vertical-section/path/' + url,
+					projection: projection,
+					imageExtent: extent,
+					crossOrigin: null
+				});
+
+				var map = new ol.Map({
+					target: 'vue_trajet_ol',
+					controls: [],
+					layers: [
+						new ol.layer.Image({
+							source: source
+
+						})
+					],
+					view: new ol.View({
+						projection: projection,
+						center: ol.extent.getCenter(extent),
+						zoom: 1.5,
+						maxZoom: 8
+					})
+				});
+				source.on('imageloadstart', function () {
+
+
+					$('#wait_coupe_trajet').show();
+
+				});
+				source.on('imageloadend', function () {
+
+					$('#wait_coupe_trajet').hide();
+
+				});
+				source.on('imageloaderror', function () {
+
+					$('#wait_coupe_trajet').hide();
+
+				});
+
+			}
+		});
+
+		$('#vue_terrain').modal({
+			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
+
+				$('#vue_terrain_ol').html('');
+
+				var extent = [0, 0, 774, 649];
+				var projection = new ol.proj.Projection({
+					code: 'xkcd-image',
+					units: 'pixels',
+					extent: extent
+				});
+
+
+				//if (coupe_trajet_en_cours.name=="En cours") {
+				coupe_terrain_en_cours.name = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				//}
+
+				$('#title_coupe_terrain').html(coupe_terrain_en_cours.name);
+
+				//var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
+				var url = '';
+				url += coupe_terrain_en_cours.terrain.lat + "/" + coupe_terrain_en_cours.terrain.lon + "/";
+				url += coupe_terrain_en_cours.depart / 1000 + '/' + coupe_terrain_en_cours.duree / (1000 * 60 * 60) + '/';
+				url += coupe_terrain_en_cours.fl + '/';
+				let p = '';
+				$.each(coupe_terrain_en_cours.parametres, function (k, v) {
+					if (p != '' && v) p += "," + k;
+					else if (p == '' && v) p += k;
+				});
+				url += p;
+				$('#coupe_terrain_to_window').off('click');
+				$('#coupe_terrain_to_window').on('click', function () {
+					newwindow("coupe_terrain.php?name=" + coupe_terrain_en_cours.name + "&url=" + url + "&language=" + context.language,coupe_terrain_en_cours.name);
+					$('#vue_terrain').modal('close');
+				});
+
+
+				var source = new ol.source.ImageStatic({
+					url: 'https://aviation.meteo.fr/wms/vertical-section/terrain/' + url,
+					projection: projection,
+					imageExtent: extent,
+					crossOrigin: null
+				});
+
+				var map = new ol.Map({
+					target: 'vue_terrain_ol',
+					controls: [],
+					layers: [
+						new ol.layer.Image({
+							source: source
+
+						})
+					],
+					view: new ol.View({
+						projection: projection,
+						center: ol.extent.getCenter(extent),
+						zoom: 1.5,
+						maxZoom: 8
+					})
+				});
+				source.on('imageloadstart', function () {
+
+
+					$('#wait_coupe_terrain').show();
+
+				});
+				source.on('imageloadend', function () {
+
+					$('#wait_coupe_terrain').hide();
+
+				});
+				source.on('imageloaderror', function () {
+
+					$('#wait_coupe_terrain').hide();
+
+				});
+
+
+
+
+			}
+		});
+
+
 		apply_language();
 		//M.AutoInit();
 	});
@@ -159,7 +342,7 @@ function check_localisation() {
 }
 function localisation_is_checked(loc) {
 	localStorage.setItem('localisation', JSON.stringify(loc));
-	
+
 	localisation = loc;
 
 
@@ -232,7 +415,7 @@ function maj_cpt_layer(menu_id) {
 	var sur = $('#' + menu_id + " div label input").length;
 	//var t = cpt + "/" + sur + " " + $_layer;
 	var t = cpt;
-	//if (cpt > 1) t += 's';
+	if (cpt > 1) t += 's';
 
 	$('#cpt_layer_' + menu_id).text(t);
 
@@ -669,7 +852,7 @@ function init_carto(id_div) {
 			$.each(layer.elevationLevels, function (key, value) {
 				p += "<option class='myselect'value='" + value + "' ";
 				if (layer.source.params.ELEVATION == value) p += "selected";
-				p += ">" + $_layer_elevationLabel + " " + value + " " + layer.elevationUnit + get_hPa_by_FL(value) +  "</option>";
+				p += ">" + $_layer_elevationLabel + " " + value + " " + layer.elevationUnit + get_hPa_by_FL(value) + "</option>";
 			});
 
 			p += "</select><label></label></div>";
@@ -836,7 +1019,7 @@ function choix_mode(mymode) {
 
 			$('#menu_droit').attr('data-target', 'menu1');
 			$('nav div ul li a i:eq( 2 )').addClass('red-text');
-			$('#titre_small_menu').text($_coupe_verticale);
+			$('#titre_small_menu').text($_coupe_terrain);
 			$('#Lance_coupe_trajet').hide();
 			break;
 		case 'coupe_trajet':
@@ -1000,13 +1183,13 @@ function apply_language() {
 
 	$('#nav-mobile li a label')[0].innerText = $_observations;
 	$('#nav-mobile li a label')[1].innerText = $_previsions;
-	$('#nav-mobile li a label')[2].innerText = $_coupe_verticale;
+	$('#nav-mobile li a label')[2].innerText = $_coupe_terrain;
 	$('#nav-mobile li a label')[3].innerText = $_coupe_trajet;
 	$('#nav-mobile li a label')[4].innerText = $_menu_preferences;
-	
+
 	$('#small_menu li a:eq( 0 )').text($_observations);
 	$('#small_menu li a:eq( 1 )').text($_previsions);
-	$('#small_menu li a:eq( 2 )').text($_coupe_verticale);
+	$('#small_menu li a:eq( 2 )').text($_coupe_terrain);
 	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
 	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
 
@@ -1032,7 +1215,7 @@ function apply_language() {
 	$('#menu_preference_repere select option:eq( 2 )').text($_repere_grat);
 	$('#menu_preference_repere select option:eq( 3 )').text($_repere_aero);
 
-	$('#menu_preference_repere select option:eq( 0 )').prop('selected', false);
+	$('#menu_preference_repere select option:eq( 0 )').prop('selected', true);
 	$('#menu_preference_repere select option:eq( 1 )').prop('selected', false);
 	$('#menu_preference_repere select option:eq( 2 )').prop('selected', false);
 	$('#menu_preference_repere select option:eq( 3 )').prop('selected', false);
@@ -1044,9 +1227,10 @@ function apply_language() {
 	$('#label_choix_run_arpege').text($_label_choix_run_arpege);
 	$('#menu2_content').html($_coupe_trajet_vide);
 	$('#menu2 div:eq( 0 ) label').text($_liste_trajets_enregistres);
-
+	$('#menu1 div:eq( 0 ) label').text($_liste_terrains_enregistres);
+	$('#menu1_content').html($_coupe_terrain_vide);
 	maj_liste_trajet_enregistre();
-
+	maj_liste_terrain_enregistre();
 
 	$('select').formSelect();
 
@@ -1063,7 +1247,7 @@ function maj_liste_trajet_enregistre(name = "") {
 	let t = localStorage.getItem('liste_coupe_trajet');
 
 	if (t == null) {
-		
+
 		$('#menu2 div:eq( 0 ) select').append($('<option>', {
 			value: '',
 			diabled: true,
@@ -1075,10 +1259,10 @@ function maj_liste_trajet_enregistre(name = "") {
 	else {
 
 		t = jQuery.parseJSON(t);
-		
-		
+
+
 		//|| !mymap.sourceLine.getFeatures()[0]
-		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0] ) {
+		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0]) {
 			$('#menu2 div:eq( 0 ) select').append($('<option>', {
 				value: '',
 				diabled: true,
@@ -1087,12 +1271,64 @@ function maj_liste_trajet_enregistre(name = "") {
 			}));
 		}
 		else {
+
+			let obj = { value: 'k', text: $_choix_trajet, selected: true, disabled: true };
+			$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
 			$.each(t, function (k, v) {
 
 
 				let obj = { value: k, text: v.name };
 				if (v.name == name) obj['selected'] = true;
 				$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
+
+			});
+		}
+
+	}
+	$('select').formSelect();
+}
+function maj_liste_terrain_enregistre(name = "") {
+
+
+	$('#menu1 div:eq( 0 ) select').children('option').remove();
+
+
+	let t = localStorage.getItem('liste_coupe_terrain');
+
+	if (t == null) {
+
+		$('#menu1 div:eq( 0 ) select').append($('<option>', {
+			value: '',
+			diabled: true,
+			selected: true,
+			text: $_aucun_terrain
+		}));
+
+	}
+	else {
+
+		t = jQuery.parseJSON(t);
+
+
+		//|| !mymap.sourceLine.getFeatures()[0]
+		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0]) {
+			$('#menu1 div:eq( 0 ) select').append($('<option>', {
+				value: '',
+				diabled: true,
+				selected: true,
+				text: $_aucun_terrain
+			}));
+		}
+		else {
+
+			let obj = { value: 'k', text: $_choix_terrain, selected: true, disabled: true };
+			$('#menu1 div:eq( 0 ) select').append($('<option>', obj));
+			$.each(t, function (k, v) {
+
+
+				let obj = { value: k, text: v.name };
+				if (v.name == name) obj['selected'] = true;
+				$('#menu1 div:eq( 0 ) select').append($('<option>', obj));
 
 			});
 		}
@@ -1107,6 +1343,14 @@ function load_trajet_from_storage(index) {
 	}
 	coupe_trajet_en_cours.load_from_storage(index);
 	Valider_trajet_oaci()
+}
+function load_terrain_from_storage(index) {
+	if (coupe_terrain_en_cours == null) {
+		coupe_terrain_en_cours = new coupe_terrain_Controller([], "menu1_content");
+
+	}
+	coupe_terrain_en_cours.load_from_storage(index);
+	Valider_terrain_oaci();
 }
 function init_animate(id_slider) {
 
@@ -1157,10 +1401,28 @@ function load_controller() {
 
 
 function open_vertical_profil(coord) {
-console.log('Lance une coupe terrain avec les coordonnées:');
+	console.log('Lance une coupe terrain avec les coordonnées:');
 	console.log(ol.proj.toLonLat(coord, 'EPSG:3857'));
+	var obj = {};
+	let p = ol.proj.toLonLat(coord, 'EPSG:3857');
+	obj.lon = p[0];
+	obj.lat = p[1];
+	let libelle = Math.abs(p[1]).toFixed(2);
+	libelle += $_symbol_degre;
+	if (p[1] > 0) libelle += $_N; else libelle += $_S;
+	libelle += "/"
+	libelle += Math.abs(p[0]).toFixed(2);
+	libelle += $_symbol_degre;
+	if (p[0] > 0) libelle += $_E; else libelle += $_O;
+	obj.icao = libelle;
+	obj.name = 'coord';
+	if (coupe_terrain_en_cours == null) coupe_terrain_en_cours = new coupe_terrain_Controller(obj, "menu1_content");
+	else {
 
-
+		coupe_terrain_en_cours.update(obj);
+	}
+	maj_liste_terrain_enregistre();
+	$('#menu1').sidenav('open');
 }
 function start_track_profil() {
 
@@ -1174,21 +1436,28 @@ function open_track_profil(coord) {
 	$.each(coord, function (key, c) {
 		var obj = {};
 		let p = ol.proj.toLonLat(c, 'EPSG:3857');
-		obj.icao = "POINT";
+
 		obj.lon = p[0];
 		obj.lat = p[1];
+		let libelle = Math.abs(p[1]).toFixed(2);
+		libelle += $_symbol_degre;
+		if (p[1] > 0) libelle += $_N; else libelle += $_S;
+		libelle += "/"
+		libelle += Math.abs(p[0]).toFixed(2);
+		libelle += $_symbol_degre;
+		if (p[0] > 0) libelle += $_E; else libelle += $_O;
+		obj.icao = libelle;
 		obj.name = 'coord';
 		t.push(obj);
 	});
 
 	//coupe_trajet_en_cours = new coupe_trajet_Controller(t, "menu2_content");
-	if (coupe_trajet_en_cours ==null) coupe_trajet_en_cours = new coupe_trajet_Controller(t, "menu2_content");
-	else 
-	{
-		
+	if (coupe_trajet_en_cours == null) coupe_trajet_en_cours = new coupe_trajet_Controller(t, "menu2_content");
+	else {
+
 		coupe_trajet_en_cours.update(t);
 	}
-	maj_liste_trajet_enregistre($('#select_liste_trajet option:selected').text());
+	maj_liste_trajet_enregistre();
 	$('#menu2').sidenav('open');
 
 
@@ -1201,37 +1470,14 @@ function test() {
 	feature.getGeometry().setCoordinates(coords);
 	//		open_track_profil(features[0].getGeometry().getCoordinates());
 }
-function get_oaci(me) {
 
-	let key = $(me).attr('index');
-	let oaci = $('#etape' + key).val().toUpperCase();
-	$('#etape' + key).css('background-color', 'white');
-	if (oaci.length >= 2) {
-
-
-		$.getJSON("https://int-aviation.meteo.fr/get_oaci_json.php?oaci=" + oaci, function (data) {
-			var instance = M.Autocomplete.getInstance(document.getElementById("etape" + key));
-
-			data.unshift(coupe_trajet_en_cours.list[key][0])
-			coupe_trajet_en_cours.list[key] = data;
-
-
-			let mydata = {};
-			$.each(data, function (i, v) {
-				mydata[v.icao] = null;
-			});
-
-			instance.updateData(mydata);
-			instance.open();
-		});
-	}
-}
 function Valider_trajet_oaci() {
 	var feature = mymap.sourceLine.getFeatures()[0];
 
 	let coords_tracage = [];
 	let coords = [];
 	let erreur = false;
+
 	$.each(coupe_trajet_en_cours.list, function (i, v) {
 		let key = $('#etape' + i).val().toUpperCase();
 		let search = null;
@@ -1251,15 +1497,53 @@ function Valider_trajet_oaci() {
 
 	});
 	if (erreur == false) {
-		
+
 		coupe_trajet_en_cours.etapes = coords;
 		feature.getGeometry().setCoordinates(coords_tracage);
-		
+		mymap.mymap.getView().setCenter(coords_tracage[0]);
+		return true;
 	}
 	else {
-		
+		return false;
 	}
 }
+function Valider_terrain_oaci() {
+	let coords_tracage = null;
+	
+	let erreur = false;
+	var feature = mymap.sourcePoint.getFeatures()[0];
+	console.log(coupe_terrain_en_cours);
+	let key = $('#terrain').val().toUpperCase();
+	let search = null;
+	$.each(coupe_terrain_en_cours.list, function (i, v) {
+
+
+
+		if (v.icao == key) { search = v; return false; }
+	});
+	
+	if (search) {
+		
+		coords_tracage=ol.proj.fromLonLat([search.lon, search.lat], 'EPSG:3857');
+		//coords_tracage.push([search.lon, search.lat]);
+
+
+	} else {
+		$('#menu1_content main div div i:eq( ' + 0 + ' )').addClass('red-text');
+		
+		return false;
+
+	}
+	
+	coupe_terrain_en_cours.terrain = search;
+	
+	feature.getGeometry().setCoordinates(coords_tracage);
+	mymap.mymap.getView().setCenter(coords_tracage);
+	
+	return true;
+
+}
+
 function add_etape(key) {
 	coupe_trajet_en_cours.add_etape(key);
 	Valider_trajet_oaci();
@@ -1285,14 +1569,21 @@ function save_trajet_oaci(name) {
 
 
 }
+function save_terrain_oaci(name) {
 
-function show_coupe_trajet(me) {
 
-	newwindow('coupe_trajet.php?coordonnees=' + JSON.stringify(coupe_trajet_en_cours.etapes), 'coupe_trajet');
+	coupe_terrain_en_cours.save(name);
+
+	maj_liste_terrain_enregistre(name);
+
+
+
+
 }
 
+
 function newwindow(url, name) {
-	
+
 	window.open(url, name, 'top=0,left=0,width=1024,height=768,menubar=no,status=no,scrollbars=yes');
 
 }

@@ -1,2 +1,1 @@
-<?php
-?>
+/home/coto/workspace/Aeroweb_maille_fine/coupe_verticale.php

@@ -19,6 +19,7 @@ class coupe_trajet_Controller {
         this.parametres = { hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, iso_hcl: false, uv_alt: true };
         this.duree = 1000 * 60 * 60;
         this.fl = '100';
+        this.depart= null;
         this.render();
 
 
@@ -71,6 +72,7 @@ class coupe_trajet_Controller {
             this.parametres = t.parametres;
             this.duree = t.duree;
             this.fl = t.fl;
+            
             this.render();
         }
 
@@ -87,19 +89,21 @@ class coupe_trajet_Controller {
         }
         else {
 
+          
 
             var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet'));
-
+            
 
 
             let i = 0;
 
             $.each(t, function (k, v) {
                 i = k;
-                if (v.name == name) { return; }
+                
+                if (v.name == name) {  return false; }
                 i++;
             });
-
+           
             t.splice(i, 1, this);
         }
 
@@ -145,7 +149,7 @@ class coupe_trajet_Controller {
     }
     render() {
       
-        var html = '';
+        var html = '<main>';
         var me = this;
         if (this.etapes != null && this.etapes.length >= 2) {
             var me = this;
@@ -166,7 +170,7 @@ class coupe_trajet_Controller {
 
                 html += "<div class='input-field col s10'>";
                 html += "<i class='material-icons prefix'>edit_location</i>";
-                html += "<input  index='" + key + "'   type='text' id='etape" + key + "' class='autocomplete etape'>";
+                html += "<input  index='" + key + "'   type='text' id='etape" + key + "' class='autocomplete etape' style='border:0px'>";
                 html += "<label for='etape" + key + "'>";
                 me.list[key] = [c];
                 if (key == 0) html += $_depart;
@@ -274,27 +278,26 @@ class coupe_trajet_Controller {
             html += "</div>";
             html += "</li>";
             html += "</ul>";
+            html += "</main>";
 
+
+            html += "<footer class='myfooter' style='height:85px;'>";
             html += "<div class='row mynav'>";
             html += "<div class='col s6 center'>";
-            html += " <a href='#!' onclick=\"Valider_trajet_oaci();\"><i class='mybutton Small material-icons'>check</i></a>";
+            html += " <a href='#!' onclick=\"if (Valider_trajet_oaci()) $('#vue_trajet').modal('open');\"><i class='mybutton Small material-icons'>check</i></a>";
             html += "</div>";
             html += "<div class='col s6 center'>";
             html += "<a class='modal-trigger' href='#save_trajet' ><i class='mybutton Small material-icons'>save</i></a>";
             html += "</div>";
 
             html += "</div>";
-
+            html += "</footer>";
 
             $('#' + this.id_cible).html(html)
 
 
             $('#collapsible_trajet').collapsible();
-            /*
-                        var elem = document.querySelector('#collapsible_trajet');
-                        var instance = M.Collapsible.init(elem, {
-                            accordion: false
-                        });*/
+           
 
             $('select').formSelect();
             M.updateTextFields();
@@ -322,7 +325,7 @@ class coupe_trajet_Controller {
             dateSlider.noUiSlider.on('update', function (values, handle) {
                 dateValues[handle].innerHTML = formatdateutcshort(new Date(+values[handle]));
                 me.duree = +values[1] - values[0]
-
+                me.depart = values[0];
             });
 
             $.each(this.etapes, function (key, c) {
