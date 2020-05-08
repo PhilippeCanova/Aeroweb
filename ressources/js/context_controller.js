@@ -36,8 +36,153 @@ class context_Controller {
 
 
     }
-    update(origin = 'fr') {
+    init_arome(now,hhmm, retour, origin = 'fr') {
 
+        this.step_previ_arome = 60 * 60 * 1000;
+
+        if (localStorage.getItem('delay_previ_arome') == null ) {
+            localStorage.setItem('delay_previ_arome', 1000);
+        }
+        this.delay_previ_arome = localStorage.getItem('delay_previ_arome');
+       
+        if (origin == 'fr') {
+            if (hhmm > "22h45" && hhmm <= "23h59") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+
+            }
+            else if (hhmm >= "00h00" && hhmm <= "05h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 12, 0, 0, 0));
+
+            }
+            else if (hhmm > "05h00" && hhmm <= "11h05") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
+
+            }
+            else if (hhmm > "11h05" && hhmm <= "15h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
+
+            }
+            else if (hhmm > "15h45" && hhmm <= "22h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+
+            }
+        }
+        else if ((origin == "re") || (origin == "my")) {
+            if (hhmm > "20h15" && hhmm <= "23h59"){
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+
+            }
+            else if (hhmm >= "00h00" && hhmm <= "02h15") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 6, 0, 0, 0));
+            }
+            else if (hhmm > "02h15" && hhmm <= "08h15") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+            }
+            else if (hhmm > "14h15" && hhmm <= "20h15") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+            }
+        
+        }
+        else if ((origin == "po") || (origin == "nc") || (origin == "gy") || (origin == "ma") || (origin == "ga")) {
+            if (hhmm > "19h45" && hhmm <= "23h59"){
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+
+            }
+            else if (hhmm >= "00h00" && hhmm <= "01h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 6, 0, 0, 0));
+            }
+            else if (hhmm > "01h45" && hhmm <= "07h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 12, 0, 0, 0));
+            }
+            else if (hhmm > "07h45" && hhmm <= "13h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+            }
+            else if (hhmm > "13h45" && hhmm <= "19h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+            }
+        
+        }
+        else if (origin == "sp") {
+            if (hhmm > "19h45" && hhmm <= "23h59"){
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+
+            }
+            else if (hhmm >= "00h00" && hhmm <= "01h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 12, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 6, 0, 0, 0));
+            }
+            else if (hhmm > "01h45" && hhmm <= "07h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 12, 0, 0, 0));
+            }
+            else if (hhmm > "07h45" && hhmm <= "13h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()-1, 18, 0, 0, 0));
+            }
+            else if (hhmm > "13h45" && hhmm <= "19h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+            }
+        }
+        this.date_start_previ_arome = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(), 0, 0, 0);
+        this.date_min_previ_arome = Date.UTC(this.date_run_arome.getUTCFullYear(), this.date_run_arome.getUTCMonth(), this.date_run_arome.getUTCDate(), this.date_run_arome.getUTCHours(), 0, 0, 0);
+        this.date_max_previ_arome = Date.UTC(this.date_run_arome.getUTCFullYear(), this.date_run_arome.getUTCMonth(), this.date_run_arome.getUTCDate() + 2, 0, 0, 0, 0);
+
+    }
+    init_arpege(now,hhmm, retour, origin = 'fr') {
         function get_H_for_arpege(now) {
             var H = 0;
             if (now.getUTCHours() > 21) { H = 21; }
@@ -50,6 +195,80 @@ class context_Controller {
             else if (now.getUTCHours() > 0) { H = 0; }
             return H;
         }
+        this.step_previ_arpege = 3 * 60 * 60 * 1000;
+        if (localStorage.getItem('delay_previ_arpege') == null ) {
+            localStorage.setItem('delay_previ_arpege', 1000);
+        }
+        this.delay_previ_arpege = localStorage.getItem('delay_previ_arpege');
+        if ((origin == 'fr') || (origin == "re") || (origin == "my") || (origin == "po") || (origin == "nc") || (origin == "gy") || (origin == "ma") || (origin == "ga") || (origin == "sp")) {
+            if (hhmm > "22h45" && hhmm <= "23h59") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0));
+                if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
+                this.date_run_arpege = d;
+                this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+
+            }
+            else if (hhmm >= "00h00" && hhmm <= "05h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
+                if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
+                this.date_run_arpege = d;
+                this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 12, 0, 0, 0));
+
+            }
+            else if (hhmm > "05h00" && hhmm <= "11h05") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
+                this.date_run_arpege = d;
+                this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+
+
+            }
+            else if (hhmm > "11h05" && hhmm <= "15h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+                if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
+                this.date_run_arpege = d;
+                this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
+
+            }
+            else if (hhmm > "15h45" && hhmm <= "22h45") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
+                if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
+                this.date_run_arpege = d;
+                this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
+
+
+            }
+        }
+        this.date_start_previ_arpege = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), get_H_for_arpege(now), 0, 0, 0);
+        this.date_min_previ_arpege = Date.UTC(this.date_run_arpege.getUTCFullYear(), this.date_run_arpege.getUTCMonth(), this.date_run_arpege.getUTCDate(), this.date_run_arpege.getUTCHours(), 0, 0, 0);
+        this.date_max_previ_arpege = Date.UTC(this.date_run_arpege.getUTCFullYear(), this.date_run_arpege.getUTCMonth(), this.date_run_arpege.getUTCDate() + 2, 0, 0, 0, 0);
+
+    }
+    init_obs(minute,retour,origin){
+        var d = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(), minute, 0, 0);;
+        if (this.date_start_obs != null && this.date_start_obs != d) retour.date_obs_change = true;
+        this.date_start_obs = d;
+
+        var d = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours() - 6, 0, 0, 0);
+        if (this.date_min_obs != null && this.date_min_obs != d) retour.date_obs_change = true;
+        this.date_min_obs = d;
+        var d = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(), minute, 0, 0);
+        if (this.date_max_obs != null && this.date_max_obs != d) retour.date_obs_change = true;
+        this.date_max_obs = d;
+
+
+        if (origin == 'po') this.step_obs = 60 * 60 * 1000;
+        else this.step_obs = 15 * 60 * 1000;
+        if (localStorage.getItem('delay_obs') == null ) {
+            localStorage.setItem('delay_obs', 1000);
+        }
+
+        this.delay_obs =localStorage.getItem('delay_obs');
+
+    }
+    update(origin = 'fr') {
+
+        
         var retour = { date_run_arome_change: false, date_run_arpege_change: false, date_obs_change: false };
 
         this.date_reference = new Date();
@@ -57,84 +276,18 @@ class context_Controller {
         this.date_reference.setUTCSeconds(0);
         this.date_reference.setUTCMilliseconds(0);
 
-        this.step_previ_arome = 60 * 60 * 1000;
-        this.delay_previ_arome = 500;
+     
 
         var now = new Date();
-        var x = "";
-        if (now.getUTCHours() < 10) x += "0"
-        x += now.getUTCHours() + "h";
-        if (now.getUTCMinutes() < 10) x += "0";
-        x += now.getUTCMinutes();
+        var hhmm = "";
+        if (now.getUTCHours() < 10) hhmm += "0"
+        hhmm += now.getUTCHours() + "h";
+        if (now.getUTCMinutes() < 10) hhmm += "0";
+        hhmm += now.getUTCMinutes();
 
-        if (x >= "22h45" && x <= "23h59") {
-            var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0));
-            if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
-            this.date_run_arome = d;
-            this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
-            if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
-            this.date_run_arpege = d;
-            this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
-
-        }
-        else if (x >= "00h00" && x <= "05h45") {
-            var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
-            if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
-            this.date_run_arome = d;
-            this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 12, 0, 0, 0));
-            if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
-            this.date_run_arpege = d;
-            this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 12, 0, 0, 0));
-
-     }
-        else if (x > "05h00" && x <= "11h05") {
-            var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
-            if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
-            this.date_run_arome = d;
-            this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
-            if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
-            this.date_run_arpege = d;
-            this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
-
-
-        }
-        else if (x > "11h05" && x <= "15h45") {
-            var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
-            if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString() )        retour.date_run_arome_change = true;
-            this.date_run_arome = d;
-            this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
-            if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
-            this.date_run_arpege = d;
-            this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0));
-
-        }
-        else if (x > "15h45" && x <= "22h45") {
-            var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0, 0));
-            if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
-            this.date_run_arome = d;
-            this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
-            if (this.date_run_arpege != null && this.date_run_arpege.toISOString() != d.toISOString()) retour.date_run_arpege_change = true;
-            this.date_run_arpege = d;
-            this.date_run_arpege_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 0, 0, 0));
-
-           
-        }
-
-        this.date_start_previ_arome = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(), 0, 0, 0);
-        this.date_min_previ_arome = Date.UTC(this.date_run_arome.getUTCFullYear(), this.date_run_arome.getUTCMonth(), this.date_run_arome.getUTCDate(), this.date_run_arome.getUTCHours(), 0, 0, 0);
-        this.date_max_previ_arome = Date.UTC(this.date_run_arome.getUTCFullYear(), this.date_run_arome.getUTCMonth(), this.date_run_arome.getUTCDate()+2,0, 0, 0, 0);
-
-     
-        
-        this.date_start_previ_arpege = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), get_H_for_arpege(now), 0, 0, 0);
-        this.date_min_previ_arpege = Date.UTC(this.date_run_arpege.getUTCFullYear(), this.date_run_arpege.getUTCMonth(), this.date_run_arpege.getUTCDate(), this.date_run_arpege.getUTCHours(), 0, 0, 0);
-        this.date_max_previ_arpege = Date.UTC(this.date_run_arpege.getUTCFullYear(), this.date_run_arpege.getUTCMonth(), this.date_run_arpege.getUTCDate()+2, 0, 0, 0, 0);
-
-
-
-
-        this.step_previ_arpege = 3 * 60 * 60 * 1000;
-        this.delay_previ_arpege = 500;
+        this.init_arome(now, hhmm, retour, origin ); 
+        this.init_arpege(now,hhmm, retour, origin ); 
+    
         //observation
         var minute = now.getUTCMinutes();
         if (minute >= 45) minute = 45;
@@ -142,24 +295,12 @@ class context_Controller {
         else if (minute >= 15) minute = 15;
         else minute = 0;
 
-        var d= Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(), minute, 0, 0);;
-        if (this.date_start_obs!=null && this.date_start_obs!=d) retour.date_obs_change=true;
-        this.date_start_obs = d;
-        
-        var d=Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours() - 6, 0, 0, 0);
-        if (this.date_min_obs!=null && this.date_min_obs!=d) retour.date_obs_change=true;
-        this.date_min_obs = d;
-        var d = Date.UTC(this.date_reference.getUTCFullYear(), this.date_reference.getUTCMonth(), this.date_reference.getUTCDate(), this.date_reference.getUTCHours(),minute, 0, 0);
-        if (this.date_max_obs!=null && this.date_max_obs!=d) retour.date_obs_change=true;
-        this.date_max_obs = d;
+        this.init_obs(minute, retour, origin ); 
        
-       
-        if (origin == 'po') this.step_obs = 60 * 60 * 1000;
-        else this.step_obs = 15 * 60 * 1000;
-        this.delay_obs = 1000;
+
         this.set_language(this.language);
 
-       
+
         return retour;
 
     }
@@ -168,5 +309,17 @@ class context_Controller {
         $.localise('ressources/js/strings', { language: this.language });
 
 
+    }
+    change_delay_obs(delay){
+        this.delay_obs = delay;
+        localStorage.setItem('delay_obs',this.delay_obs);
+    }
+    change_delay_previ_arome(delay){
+        this.delay_previ_arome = delay;
+        localStorage.setItem('delay_previ_arome',this.delay_previ_arome);
+    }
+    change_delay_previ_arpege(delay){
+        this.delay_previ_arpege = delay;
+        localStorage.setItem('delay_previ_arpege',this.delay_previ_arpege);
     }
 }

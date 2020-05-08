@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <link rel="shortcut icon" type="image/png" href="./favicon.ico" />
   <!--Import Google Icon Font-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="nouislider/nouislider.min.css" media="screen,projection" />
@@ -18,6 +19,7 @@
   <script type="text/javascript" src="ressources/js/context_controller.js"></script>
   <script type="text/javascript" src="ressources/js/slider_run_controller.js"></script>
   <script type="text/javascript" src="ressources/js/coupe_trajet_controller.js"></script>
+  <script type="text/javascript" src="ressources/js/coupe_terrain_controller.js"></script>
   <script type="text/javascript" src="ressources/js/index.js"></script>
 
   <script>
@@ -28,15 +30,19 @@
 
 
   <header class="myheader" id='header'>
-    <ul id="menu1" class="sidenav collapsible">
-      <li>
-        <div class="collapsible-header"><i class="material-icons">place</i>Coupe terrain</div>
-        <div class="collapsible-body">
-          <span>menu1</span>
+    <div id="menu1" class="sidenav row">
+      <div class='input-field col s12'>
+        <select id='select_liste_terrain' onchange="load_terrain_from_storage($(this).val());">
+        </select>
+        <label></label>
+      </div>
 
-        </div>
-      </li>
-    </ul>
+      <div id='menu1_content'>
+
+
+
+      </div>
+    </div>
 
     <div id="menu3" class="sidenav">
 
@@ -84,7 +90,13 @@
         <label class='col s12 center label-title' id='label_choix_run_arome'>Choix du run</label>
         <div class='col s2' id='switch_run_prevision_arome'></div>
         <div id='choix_run_arome' class='col s8 center small_span'></div>
+     
+        <label class='label-title col s12 center'>Vitesse animation prevision arome</label>
+        <div class='col s4 '><span id="value_speed_previ_arome" class='small_span '>Vitesse d'animation prevision arome</span></div>
+        <div id="speed_previ_arome" class='col s7  blue'></div>
       </div>
+
+
       <hr>
 
 
@@ -100,6 +112,10 @@
         <label class='col s12 center label-title' id='label_choix_run_arpege'>Choix du run</label>
         <div class='col s2' id='switch_run_prevision_arpege'></div>
         <div id='choix_run_arpege' class='col s8 center small_span'></div>
+        <label class='col s12 center label-title' >Vitesse animation prevision arpege</label>
+        <div class='col s4 '><span id="value_speed_previ_arpege" class='small_span '>Vitesse d'animation prevision arpege</span></div>
+        <div id="speed_previ_arpege" class='col s7  blue'></div>
+
       </div>
     </div>
     <div id="menu2" class="sidenav row">
@@ -124,9 +140,17 @@
         <div class="collapsible-body row" id='menu_imagerie'>
         </div>
       </li>
+
+      <div class='row'>
+        <label class='label-title col s12 center'>Vitesse animation observation</label>
+        <div class='col s4 '><span id="value_speed_obs" class='small_span '>Vitesse d'animation observation</span></div>
+        <div id="speed_obs" class='col s7  blue'></div>
+      </div>
+
+
     </div>
 
-    <div id="menu5" class="sidenav ">
+    <div id="menu5" class="sidenav row">
       <h5 id="id_version">Version 1.0</h5>
       <div id='menu_preference_language' class="input-field col s12">
         <select onchange="context.set_language($(this).val());load_controller();apply_language();">
@@ -162,6 +186,7 @@
         </select>
         <label>choisissez vos reperes geographiques</label>
       </div>
+
     </div>
 
 
@@ -238,26 +263,69 @@
           class="modal-close waves-effect waves-green btn-flat">OK</a>
       </div>
     </div>
+    <div id="save_terrain" class="modal">
+      <div class="modal-content">
+        <h4>Donnez un nom a cette coupe terrain</h4>
+        <p><input type='text' id='terrain_name'></p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" onclick="save_terrain_oaci($('#terrain_name').val()); "
+          class="modal-close waves-effect waves-green btn-flat">OK</a>
+      </div>
+    </div>
     <div id="vue_trajet" class="modal modal_trajet">
       <div class="modal-content" id='vue_trajet_ol' style='padding:0px;height:100%;'>
 
       </div>
 
-     <a style="position:absolute;top:0px; left:0px;" href="#!" onclick="$('#vue_trajet').modal('close');"> <i class="material-icons">close</i></a>
-     <a style="position:absolute;top:0px; right:0px;" href="#!" id='coupe_trajet_to_window' > <i class="material-icons">web_asset</i></a>
+      <a style="position:absolute;top:0px; left:0px;" href="#!" onclick="$('#vue_trajet').modal('close');"> <i
+          class="material-icons">close</i></a>
+      <a style="position:absolute;top:0px; right:0px;" href="#!" id='coupe_trajet_to_window'> <i
+          class="material-icons">web_asset</i></a>
 
-     <div id='title_coupe_trajet' class ='center-align' style="position:absolute;  top:0px; left:20px;" ></div>
-     <div id='wait_coupe_trajet' class="preloader-wrapper big active" style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;" >
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div><div class="gap-patch">
-          <div class="circle"></div>
-        </div><div class="circle-clipper right">
-          <div class="circle"></div>
+      <div id='title_coupe_trajet' class='center-align' style="position:absolute;  top:0px; left:20px;"></div>
+      <div id='wait_coupe_trajet' class="preloader-wrapper big active"
+        style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
         </div>
       </div>
     </div>
+    <div id="vue_terrain" class="modal modal_terrain">
+      <div class="modal-content" id='vue_terrain_ol' style='padding:0px;height:100%;'>
+
+      </div>
+
+      <a style="position:absolute;top:0px; left:0px;" href="#!" onclick="$('#vue_terrain').modal('close');"> <i
+          class="material-icons">close</i></a>
+      <a style="position:absolute;top:0px; right:0px;" href="#!" id='coupe_terrain_to_window'> <i
+          class="material-icons">web_asset</i></a>
+
+      <div id='title_coupe_terrain' class='center-align' style="position:absolute;  top:0px; left:20px;"></div>
+      <div id='wait_coupe_terrain' class="preloader-wrapper big active"
+        style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+
+
 
     </div>
 
@@ -301,7 +369,7 @@
     });
 
     setInterval(function () { update_context(false); }, 5 * 60 * 1000);
-    $('#Lance_coupe_trajet').hide();
+    //$('#Lance_coupe_trajet').hide();
 
   </script>
 </body>

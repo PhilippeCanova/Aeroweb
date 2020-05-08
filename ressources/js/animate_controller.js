@@ -134,5 +134,13 @@ class animate_Controller {
 		}
 
 	}
+	change_delay(delay){
+		this.delay=delay;
+		if (this.timer) {this.stop();
+			
+			this.play();
+		}
+		
+	}
 	
 }

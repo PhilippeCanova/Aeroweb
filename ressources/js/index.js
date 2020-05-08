@@ -5,6 +5,7 @@ var slider_run_arome = null;
 var slider_run_arpege = null;
 
 var coupe_trajet_en_cours = null;
+var coupe_terrain_en_cours = null;
 
 var version = '1.0';
 var context = new context_Controller();
@@ -33,6 +34,8 @@ function access_direct(origin, side_nav_id) {
 	else if (origin == "sp") contenu = vigilance_saint_pierre_et_miquelon();
 	else contenu = vigilance_metropole();
 
+	localStorage.setItem('liste_coupe_trajet', JSON.stringify([]));
+	localStorage.setItem('liste_coupe_terrain', JSON.stringify([]));
 
 	localisation_is_checked(contenu);
 
@@ -149,11 +152,18 @@ function init_materialize() {
 				$('#save_trajet input').val(Title);
 			}
 		});
-
+		$('#save_terrain').modal({
+			onOpenEnd: function () {
+				let Title = $_donne_nom_terrain;
+				$('#save_terrain h4').html(Title);
+				Title = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				$('#save_terrain input').val(Title);
+			}
+		});
 		$('#vue_trajet').modal({
 			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
 				$('#vue_trajet_ol').html('');
-				$('.preloader-wrapper').show();
+
 				var extent = [0, 0, 774, 649];
 				var projection = new ol.proj.Projection({
 					code: 'xkcd-image',
@@ -161,27 +171,36 @@ function init_materialize() {
 					extent: extent
 				});
 
-				let Title = '';
-				Title += $_coupe_trajet + " (" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
-				$('#title_coupe_trajet').html(Title);
-				var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
+
+				//if (coupe_trajet_en_cours.name=="En cours") {
+				coupe_trajet_en_cours.name = "(" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
+				//}
+				$('#title_coupe_trajet').html(coupe_trajet_en_cours.name);
+
+
+
+
+				//var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
+				var url = '';
 				url += coupe_trajet_en_cours.etapes[0].lat + "/" + coupe_trajet_en_cours.etapes[0].lon + "/";
 				url += coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lat + "/" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lon + "/";
 				url += coupe_trajet_en_cours.depart / 1000 + '/' + coupe_trajet_en_cours.duree / (1000 * 60 * 60) + '/';
 				url += coupe_trajet_en_cours.fl + '/';
 				let p = '';
-				$.each(coupe_trajet_en_cours.parametres, function (k, v) { if (p != '') p += ','; if (v) p += k; });
+				$.each(coupe_trajet_en_cours.parametres, function (k, v) {
+					if (p != '' && v) p += "," + k;
+					else if (p == '' && v) p += k;
+				});
 				url += p;
 				$('#coupe_trajet_to_window').off('click');
-				$('#coupe_trajet_to_window').on('click',function()
-				{
-					newwindow("coupe_trajet.php?title="+Title+"&url="+url);
-					$('#vue_trajet').modal('close'); 
+				$('#coupe_trajet_to_window').on('click', function () {
+					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url=" + url + "&language=" + context.language);
+					$('#vue_trajet').modal('close');
 				});
 
 
 				var source = new ol.source.ImageStatic({
-					url: url,
+					url: 'https://aviation.meteo.fr/wms/vertical-section/path/' + url,
 					projection: projection,
 					imageExtent: extent,
 					crossOrigin: null
@@ -206,21 +225,178 @@ function init_materialize() {
 				source.on('imageloadstart', function () {
 
 
-					$('.preloader-wrapper').show();
+					$('#wait_coupe_trajet').show();
 
 				});
 				source.on('imageloadend', function () {
 
-					$('.preloader-wrapper').hide();
+					$('#wait_coupe_trajet').hide();
 
 				});
 				source.on('imageloaderror', function () {
 
-					$('.preloader-wrapper').hide();
+					$('#wait_coupe_trajet').hide();
 
 				});
 
 			}
+		});
+
+		$('#vue_terrain').modal({
+			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
+
+				$('#vue_terrain_ol').html('');
+
+				var extent = [0, 0, 774, 649];
+				var projection = new ol.proj.Projection({
+					code: 'xkcd-image',
+					units: 'pixels',
+					extent: extent
+				});
+
+
+				//if (coupe_trajet_en_cours.name=="En cours") {
+				coupe_terrain_en_cours.name = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				//}
+
+				$('#title_coupe_terrain').html(coupe_terrain_en_cours.name);
+
+				//var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
+				var url = '';
+				url += coupe_terrain_en_cours.terrain.lat + "/" + coupe_terrain_en_cours.terrain.lon + "/";
+				url += coupe_terrain_en_cours.depart / 1000 + '/' + coupe_terrain_en_cours.duree / (1000 * 60 * 60) + '/';
+				url += coupe_terrain_en_cours.fl + '/';
+				let p = '';
+				$.each(coupe_terrain_en_cours.parametres, function (k, v) {
+					if (p != '' && v) p += "," + k;
+					else if (p == '' && v) p += k;
+				});
+				url += p;
+				$('#coupe_terrain_to_window').off('click');
+				$('#coupe_terrain_to_window').on('click', function () {
+					newwindow("coupe_terrain.html?name=" + coupe_terrain_en_cours.name + "&url=" + url + "&language=" + context.language);
+					$('#vue_terrain').modal('close');
+				});
+
+
+				var source = new ol.source.ImageStatic({
+					url: 'https://aviation.meteo.fr/wms/vertical-section/terrain/' + url,
+					projection: projection,
+					imageExtent: extent,
+					crossOrigin: null
+				});
+
+				var map = new ol.Map({
+					target: 'vue_terrain_ol',
+					controls: [],
+					layers: [
+						new ol.layer.Image({
+							source: source
+
+						})
+					],
+					view: new ol.View({
+						projection: projection,
+						center: ol.extent.getCenter(extent),
+						zoom: 1.5,
+						maxZoom: 8
+					})
+				});
+				source.on('imageloadstart', function () {
+
+
+					$('#wait_coupe_terrain').show();
+
+				});
+				source.on('imageloadend', function () {
+
+					$('#wait_coupe_terrain').hide();
+
+				});
+				source.on('imageloaderror', function () {
+
+					$('#wait_coupe_terrain').hide();
+
+				});
+
+
+
+
+			}
+		});
+		var slider = document.getElementById('speed_obs' );
+
+		noUiSlider.create(slider, {
+			start: context.delay_obs,
+			step: 100,
+			padding: 0,
+			margin: 0,
+			orientation: 'horizontal',
+			range: {
+				min: 100,
+				max: 3000
+			},
+			format: wNumb({
+				decimals: 0
+			})
+		});
+
+
+
+		slider.noUiSlider.on('update', function (values, handle) {
+			$("#value_speed_obs").text((+values[handle] / 1000) + ' '+'seconde(s)');
+			context.change_delay_obs(+values[handle]);
+			slider_animate.change_delay(context.delay_obs);
+		});
+
+		var slider = document.getElementById('speed_previ_arome' );
+
+		noUiSlider.create(slider, {
+			start: context.delay_previ_arome,
+			step: 100,
+			padding: 0,
+			margin: 0,
+			orientation: 'horizontal',
+			range: {
+				min: 100,
+				max: 3000
+			},
+			format: wNumb({
+				decimals: 0
+			})
+		});
+
+
+
+		slider.noUiSlider.on('update', function (values, handle) {
+			$("#value_speed_previ_arome").text((+values[handle] / 1000) + ' '+'seconde(s)');
+			context.change_delay_previ_arome(+values[handle]);
+			slider_animate.change_delay(context.delay_previ_arome);
+		});
+
+		var slider = document.getElementById('speed_previ_arpege' );
+
+		noUiSlider.create(slider, {
+			start: context.delay_previ_arpege,
+			step: 100,
+			padding: 0,
+			margin: 0,
+			orientation: 'horizontal',
+			range: {
+				min: 100,
+				max: 3000
+			},
+			format: wNumb({
+				decimals: 0
+			})
+		});
+
+
+
+		slider.noUiSlider.on('update', function (values, handle) {
+			$("#value_speed_previ_arpege").text((+values[handle] / 1000) + ' '+'seconde(s)');
+			context.change_delay_previ_arpege(+values[handle]);
+			slider_animate.change_delay(context.delay_previ_arpege);
 		});
 		apply_language();
 		//M.AutoInit();
@@ -286,7 +462,7 @@ function get_vigilance(latitude, longitude, zoom) {
 
 function init_localisation() {
 	localStorage.setItem('liste_coupe_trajet', JSON.stringify([]));
-
+	localStorage.setItem('liste_coupe_terrain', JSON.stringify([]));
 	if (navigator && navigator.geolocation) {
 
 		navigator.geolocation.getCurrentPosition(function (position) {
@@ -315,7 +491,7 @@ function maj_cpt_layer(menu_id) {
 	var sur = $('#' + menu_id + " div label input").length;
 	//var t = cpt + "/" + sur + " " + $_layer;
 	var t = cpt;
-	if (cpt > 1) t += 's';
+	//if (cpt > 1) t += 's';
 
 	$('#cpt_layer_' + menu_id).text(t);
 
@@ -329,14 +505,15 @@ function init_carto(id_div) {
 	mymap = new map_Controler(id_div, h, localisation.center.lon, localisation.center.lat, localisation.zoom_factor, extent, '');
 
 
+
 	var t_layer = {
 		fr: [
 
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.uv_height',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.uv_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1,
 					serverType: 'geoserver'
 				},
@@ -352,8 +529,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.ff_raf_height',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.ff_raf_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -368,8 +545,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.uv_isobaric',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.uv_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -386,8 +563,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.t_sol_arome',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.t_sol_arome', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -403,8 +580,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.td_height',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.td_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -420,8 +597,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.rrtt',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.rrtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -437,8 +614,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.ngtt',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.ngtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -454,8 +631,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/gafor.visi_metropole',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'gafor.visi_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -471,8 +648,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/gafor.plafond_metropole',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'gafor.plafond_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -488,8 +665,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.h_coulim',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.h_coulim', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -505,8 +682,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.vv2_isobaric',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.vv2_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -524,8 +701,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.sat_isp',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.sat_isp', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -541,8 +718,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.nebul_bas',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.nebul_bas', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -558,8 +735,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.nebul_moyen',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.nebul_moyen', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -575,8 +752,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/model.nebul_haut',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'model.nebul_haut', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arome',
@@ -592,8 +769,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/zt.t',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'zt.t', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arpege',
@@ -611,8 +788,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/zt.z',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'zt.z', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				modele: 'arpege',
@@ -630,8 +807,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/satellite.ir_hrv',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'satellite.ir_hrv', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				opacity: 0.6,
@@ -646,8 +823,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/radar.reflectivity_fm',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'radar.reflectivity_fm', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				opacity: 0.6,
@@ -662,8 +839,8 @@ function init_carto(id_div) {
 			{
 				source:
 				{
-					url: 'http://aviation.meteo.fr/wms/map/foudre.impact',
-					params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+					params: { champ: 'foudre.impact', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				opacity: 1,
@@ -687,8 +864,8 @@ function init_carto(id_div) {
 		po: [{
 			source:
 			{
-				url: 'http://aviation.meteo.fr/wms/map/satellite.ir_polynesie_goes17',
-				params: { TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+				url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
+				params: { champ: 'satellite.ir_polynesie_goes17', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 				ratio: 1, serverType: 'geoserver'
 			},
 			opacity: 0.8,
@@ -702,6 +879,8 @@ function init_carto(id_div) {
 		}
 		],
 		sp: [],
+
+
 	};
 
 	$('#menu_vent').html('');
@@ -711,13 +890,13 @@ function init_carto(id_div) {
 	$('#menu_aero').html('');
 	$('#menu_imagerie').html('');
 	$('#menu_analyse_generale').html('');
-	$('#cpt_layer_menu_vent').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_precip').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_nuage').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_tempe').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_aero').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_imagerie').html('0/0 ' + $_layer);
-	$('#cpt_layer_menu_analyse_generale').html('0/0 ' + $_layer);
+	$('#cpt_layer_menu_vent').html('0' );
+	$('#cpt_layer_menu_precip').html('0' );
+	$('#cpt_layer_menu_nuage').html('0' );
+	$('#cpt_layer_menu_tempe').html('0' );
+	$('#cpt_layer_menu_aero').html('0' );
+	$('#cpt_layer_menu_imagerie').html('0' );
+	$('#cpt_layer_menu_analyse_generale').html('0' );
 
 	$.each(t_layer[localisation.origin], function (key, layer) {
 
@@ -845,6 +1024,7 @@ function init_carto(id_div) {
 
 	});
 
+	
 
 
 
@@ -919,8 +1099,8 @@ function choix_mode(mymode) {
 
 			$('#menu_droit').attr('data-target', 'menu1');
 			$('nav div ul li a i:eq( 2 )').addClass('red-text');
-			$('#titre_small_menu').text($_coupe_verticale);
-			$('#Lance_coupe_trajet').hide();
+			$('#titre_small_menu').text($_coupe_terrain);
+			//$('#Lance_coupe_trajet').hide();
 			break;
 		case 'coupe_trajet':
 			mymap.setDrawMode('LineString');
@@ -930,8 +1110,8 @@ function choix_mode(mymode) {
 			$('#menu_droit').attr('data-target', 'menu2');
 			$('nav div ul li a i:eq( 3 )').addClass('red-text');
 			$('#titre_small_menu').text($_coupe_trajet);
-			if ($('#Lance_coupe_trajet').attr('data')) $('#Lance_coupe_trajet').show();
-			else $('#Lance_coupe_trajet').hide();
+			//if ($('#Lance_coupe_trajet').attr('data')) $('#Lance_coupe_trajet').show();
+			//else $('#Lance_coupe_trajet').hide();
 			break;
 		case 'prevision':
 			mymap.setDrawMode(null);
@@ -952,7 +1132,7 @@ function choix_mode(mymode) {
 			}
 			else slider_animate.update(context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ_arome);
 
-			$('#Lance_coupe_trajet').hide();
+			//$('#Lance_coupe_trajet').hide();
 			break;
 		case 'observation':
 			mymap.setDrawMode(null);
@@ -968,19 +1148,20 @@ function choix_mode(mymode) {
 			$('#titre_small_menu').text($_observations);
 
 			slider_animate.update(context.date_start_obs, context.date_min_obs, context.date_max_obs, context.step_obs, context.delay_obs)
-			$('#Lance_coupe_trajet').hide();
+			//$('#Lance_coupe_trajet').hide();
 			break;
 		case 'preference':
 			mymap.setDrawMode(null);
-			mymap.set_all_layer_invisible(['prevision', 'observation']);
+			//mymap.set_all_layer_invisible(['prevision', 'observation']);
 			$('#menu5').sidenav('open');
 			$('footer div.row div.col div.row div.col:gt( 0 )').hide();
 			$('#play_stop i').text(slider_animate.stop());
 			$('#menu_droit').attr('data-target', 'menu5');
 			$('nav div ul li a i:eq( 4 )').addClass('red-text');
 			$('#titre_small_menu').text($_menu_preferences);
-			$('#Lance_coupe_trajet').hide();
+			//$('#Lance_coupe_trajet').hide();
 			break;
+			
 	}
 
 
@@ -1083,13 +1264,13 @@ function apply_language() {
 
 	$('#nav-mobile li a label')[0].innerText = $_observations;
 	$('#nav-mobile li a label')[1].innerText = $_previsions;
-	$('#nav-mobile li a label')[2].innerText = $_coupe_verticale;
+	$('#nav-mobile li a label')[2].innerText = $_coupe_terrain;
 	$('#nav-mobile li a label')[3].innerText = $_coupe_trajet;
 	$('#nav-mobile li a label')[4].innerText = $_menu_preferences;
 
 	$('#small_menu li a:eq( 0 )').text($_observations);
 	$('#small_menu li a:eq( 1 )').text($_previsions);
-	$('#small_menu li a:eq( 2 )').text($_coupe_verticale);
+	$('#small_menu li a:eq( 2 )').text($_coupe_terrain);
 	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
 	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
 
@@ -1127,9 +1308,10 @@ function apply_language() {
 	$('#label_choix_run_arpege').text($_label_choix_run_arpege);
 	$('#menu2_content').html($_coupe_trajet_vide);
 	$('#menu2 div:eq( 0 ) label').text($_liste_trajets_enregistres);
-
+	$('#menu1 div:eq( 0 ) label').text($_liste_terrains_enregistres);
+	$('#menu1_content').html($_coupe_terrain_vide);
 	maj_liste_trajet_enregistre();
-
+	maj_liste_terrain_enregistre();
 
 	$('select').formSelect();
 
@@ -1138,6 +1320,7 @@ function apply_language() {
 
 }
 function maj_liste_trajet_enregistre(name = "") {
+
 
 	$('#menu2 div:eq( 0 ) select').children('option').remove();
 
@@ -1160,7 +1343,7 @@ function maj_liste_trajet_enregistre(name = "") {
 
 
 		//|| !mymap.sourceLine.getFeatures()[0]
-		if (t.length == 0) {// || !mymap.sourceLine.getFeatures()[0]) {
+		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0]) {
 			$('#menu2 div:eq( 0 ) select').append($('<option>', {
 				value: '',
 				diabled: true,
@@ -1174,8 +1357,7 @@ function maj_liste_trajet_enregistre(name = "") {
 			$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
 			$.each(t, function (k, v) {
 
-//console.log(v);
-//console.log(k);
+
 				let obj = { value: k, text: v.name };
 				if (v.name == name) obj['selected'] = true;
 				$('#menu2 div:eq( 0 ) select').append($('<option>', obj));
@@ -1186,13 +1368,70 @@ function maj_liste_trajet_enregistre(name = "") {
 	}
 	$('select').formSelect();
 }
+function maj_liste_terrain_enregistre(name = "") {
+
+
+	$('#menu1 div:eq( 0 ) select').children('option').remove();
+
+
+	let t = localStorage.getItem('liste_coupe_terrain');
+
+	if (t == null) {
+
+		$('#menu1 div:eq( 0 ) select').append($('<option>', {
+			value: '',
+			diabled: true,
+			selected: true,
+			text: $_aucun_terrain
+		}));
+
+	}
+	else {
+
+		t = jQuery.parseJSON(t);
+
+
+		//|| !mymap.sourceLine.getFeatures()[0]
+		if (t.length == 0 || !mymap.sourceLine.getFeatures()[0]) {
+			$('#menu1 div:eq( 0 ) select').append($('<option>', {
+				value: '',
+				diabled: true,
+				selected: true,
+				text: $_aucun_terrain
+			}));
+		}
+		else {
+
+			let obj = { value: 'k', text: $_choix_terrain, selected: true, disabled: true };
+			$('#menu1 div:eq( 0 ) select').append($('<option>', obj));
+			$.each(t, function (k, v) {
+
+
+				let obj = { value: k, text: v.name };
+				if (v.name == name) obj['selected'] = true;
+				$('#menu1 div:eq( 0 ) select').append($('<option>', obj));
+
+			});
+		}
+
+	}
+	$('select').formSelect();
+}
 function load_trajet_from_storage(index) {
-	
 	if (coupe_trajet_en_cours == null) {
 		coupe_trajet_en_cours = new coupe_trajet_Controller([], "menu2_content");
+
 	}
 	coupe_trajet_en_cours.load_from_storage(index);
 	Valider_trajet_oaci()
+}
+function load_terrain_from_storage(index) {
+	if (coupe_terrain_en_cours == null) {
+		coupe_terrain_en_cours = new coupe_terrain_Controller([], "menu1_content");
+
+	}
+	coupe_terrain_en_cours.load_from_storage(index);
+	Valider_terrain_oaci();
 }
 function init_animate(id_slider) {
 
@@ -1245,8 +1484,26 @@ function load_controller() {
 function open_vertical_profil(coord) {
 	console.log('Lance une coupe terrain avec les coordonnées:');
 	console.log(ol.proj.toLonLat(coord, 'EPSG:3857'));
+	var obj = {};
+	let p = ol.proj.toLonLat(coord, 'EPSG:3857');
+	obj.lon = p[0];
+	obj.lat = p[1];
+	let libelle = Math.abs(p[1]).toFixed(2);
+	libelle += $_symbol_degre;
+	if (p[1] > 0) libelle += $_N; else libelle += $_S;
+	libelle += "/"
+	libelle += Math.abs(p[0]).toFixed(2);
+	libelle += $_symbol_degre;
+	if (p[0] > 0) libelle += $_E; else libelle += $_O;
+	obj.icao = libelle;
+	obj.name = 'coord';
+	if (coupe_terrain_en_cours == null) coupe_terrain_en_cours = new coupe_terrain_Controller(obj, "menu1_content");
+	else {
 
-
+		coupe_terrain_en_cours.update(obj);
+	}
+	maj_liste_terrain_enregistre();
+	$('#menu1').sidenav('open');
 }
 function start_track_profil() {
 
@@ -1294,35 +1551,9 @@ function test() {
 	feature.getGeometry().setCoordinates(coords);
 	//		open_track_profil(features[0].getGeometry().getCoordinates());
 }
-function get_oaci(me) {
 
-	let key = $(me).attr('index');
-	let oaci = $('#etape' + key).val().toUpperCase();
-	$('#etape' + key).css('background-color', 'white');
-	if (oaci.length >= 2) {
-
-
-		$.getJSON("https://int-aviation.meteo.fr/get_oaci_json.php?oaci=" + oaci, function (data) {
-			var instance = M.Autocomplete.getInstance(document.getElementById("etape" + key));
-
-			data.unshift(coupe_trajet_en_cours.list[key][0])
-			coupe_trajet_en_cours.list[key] = data;
-
-
-			let mydata = {};
-			$.each(data, function (i, v) {
-				mydata[v.icao] = null;
-			});
-
-			instance.updateData(mydata);
-			instance.open();
-		});
-	}
-}
 function Valider_trajet_oaci() {
-
 	var feature = mymap.sourceLine.getFeatures()[0];
-console.log(feature);
 
 	let coords_tracage = [];
 	let coords = [];
@@ -1350,12 +1581,50 @@ console.log(feature);
 
 		coupe_trajet_en_cours.etapes = coords;
 		feature.getGeometry().setCoordinates(coords_tracage);
+		mymap.mymap.getView().setCenter(coords_tracage[0]);
 		return true;
 	}
 	else {
 		return false;
 	}
 }
+function Valider_terrain_oaci() {
+	let coords_tracage = null;
+	
+	let erreur = false;
+	var feature = mymap.sourcePoint.getFeatures()[0];
+	console.log(coupe_terrain_en_cours);
+	let key = $('#terrain').val().toUpperCase();
+	let search = null;
+	$.each(coupe_terrain_en_cours.list, function (i, v) {
+
+
+
+		if (v.icao == key) { search = v; return false; }
+	});
+	
+	if (search) {
+		
+		coords_tracage=ol.proj.fromLonLat([search.lon, search.lat], 'EPSG:3857');
+		//coords_tracage.push([search.lon, search.lat]);
+
+
+	} else {
+		$('#menu1_content main div div i:eq( ' + 0 + ' )').addClass('red-text');
+		
+		return false;
+
+	}
+	
+	coupe_terrain_en_cours.terrain = search;
+	
+	feature.getGeometry().setCoordinates(coords_tracage);
+	mymap.mymap.getView().setCenter(coords_tracage);
+	
+	return true;
+
+}
+
 function add_etape(key) {
 	coupe_trajet_en_cours.add_etape(key);
 	Valider_trajet_oaci();
@@ -1381,11 +1650,18 @@ function save_trajet_oaci(name) {
 
 
 }
+function save_terrain_oaci(name) {
 
-function show_coupe_trajet(me) {
 
-	newwindow('coupe_trajet.php?coordonnees=' + JSON.stringify(coupe_trajet_en_cours.etapes), 'coupe_trajet');
+	coupe_terrain_en_cours.save(name);
+
+	maj_liste_terrain_enregistre(name);
+
+
+
+
 }
+
 
 function newwindow(url, name) {
 

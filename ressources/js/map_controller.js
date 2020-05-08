@@ -19,7 +19,10 @@ class map_Controler {
 		**      Traçage des coupe terrain
 		*/
 		this.sourcePoint = new ol.source.Vector({ wrapX: false });
-
+		var feature = new ol.Feature({
+			geometry: new ol.geom.Point([ 0 , 1]),
+		  });
+		  this.sourcePoint.addFeature(feature);
 
 		this.layerPoint = new ol.layer.Vector({
 			source: this.sourcePoint,

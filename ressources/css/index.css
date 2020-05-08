@@ -74,37 +74,7 @@ color: grey;
 display: block;
 margin: 0px 0px 15px 0px;
 }
-.chip_etape
-{
-	border-radius:5px;
-	color:white;
-	background-color: blue;
-	vertical-align: middle;
-	display: inline;
-	margin:2px;
-	padding:2px;
-}
-.chip_depart
-{
-	border-radius:5px;
-	color:white;
-	background-color: rgb(73, 73, 107);
-	vertical-align: middle;
-	display: inline;
-	margin:2px;
-	padding:2px;
 
-}
-.chip_arrivee
-{
-	border-radius:5px;
-	color:white;
-	background-color: rgb(73, 73, 107);
-	vertical-align: middle;
-	display: inline;
-	margin:2px;
-	padding:2px;
-}
 .etape{
 	
 	
@@ -149,6 +119,12 @@ border-radius: 3px;
 	background-color: rgb(18, 120, 151);
 }
 .modal_trajet  {
+
+	max-height: 100%;
+	height:100%;
+	width:100%;
+}
+.modal_terrain  {
 
 	max-height: 100%;
 	height:100%;
