@@ -11,9 +11,7 @@ var version = '1.0';
 var context = new context_Controller();
 
 hpa_fl = {
-	'300': '300', '350': '265', '400': '240', '450': '210', '500': '180', '550': '160',
-	'600': '140', '650': '120', '700': '100', '750': '080', '800': '065', '850': '050',
-	'900': '045', '925': '035', '950': '025', '1000': '005'
+	'300': '300','350': '270','400': '240','450': '210','500': '180','550': '160','600': '140','650': '120','700': '100','750': '80', '800': '65', '850': '50', '900': '30', '925': '27', '950': '20', '1000': '5'
 }
 
 function get_hPa_by_FL(value) {
@@ -194,7 +192,11 @@ function init_materialize() {
 				url += p;
 				$('#coupe_trajet_to_window').off('click');
 				$('#coupe_trajet_to_window').on('click', function () {
+<<<<<<< HEAD
 					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url=" + url + "&language=" + context.language);
+=======
+					newwindow("coupe_trajet.php?name=" + coupe_trajet_en_cours.name + "&url=" + url + "&language=" + context.language,coupe_trajet_en_cours.name);
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
 					$('#vue_trajet').modal('close');
 				});
 
@@ -226,6 +228,8 @@ function init_materialize() {
 
 
 					$('#wait_coupe_trajet').show();
+<<<<<<< HEAD
+=======
 
 				});
 				source.on('imageloadend', function () {
@@ -242,6 +246,99 @@ function init_materialize() {
 			}
 		});
 
+		$('#vue_terrain').modal({
+			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
+
+				$('#vue_terrain_ol').html('');
+
+				var extent = [0, 0, 774, 649];
+				var projection = new ol.proj.Projection({
+					code: 'xkcd-image',
+					units: 'pixels',
+					extent: extent
+				});
+
+
+				//if (coupe_trajet_en_cours.name=="En cours") {
+				coupe_terrain_en_cours.name = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				//}
+
+				$('#title_coupe_terrain').html(coupe_terrain_en_cours.name);
+
+				//var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
+				var url = '';
+				url += coupe_terrain_en_cours.terrain.lat + "/" + coupe_terrain_en_cours.terrain.lon + "/";
+				url += coupe_terrain_en_cours.depart / 1000 + '/' + coupe_terrain_en_cours.duree / (1000 * 60 * 60) + '/';
+				url += coupe_terrain_en_cours.fl + '/';
+				let p = '';
+				$.each(coupe_terrain_en_cours.parametres, function (k, v) {
+					if (p != '' && v) p += "," + k;
+					else if (p == '' && v) p += k;
+				});
+				url += p;
+				$('#coupe_terrain_to_window').off('click');
+				$('#coupe_terrain_to_window').on('click', function () {
+					newwindow("coupe_terrain.php?name=" + coupe_terrain_en_cours.name + "&url=" + url + "&language=" + context.language,coupe_terrain_en_cours.name);
+					$('#vue_terrain').modal('close');
+				});
+
+
+				var source = new ol.source.ImageStatic({
+					url: 'https://aviation.meteo.fr/wms/vertical-section/terrain/' + url,
+					projection: projection,
+					imageExtent: extent,
+					crossOrigin: null
+				});
+
+				var map = new ol.Map({
+					target: 'vue_terrain_ol',
+					controls: [],
+					layers: [
+						new ol.layer.Image({
+							source: source
+
+						})
+					],
+					view: new ol.View({
+						projection: projection,
+						center: ol.extent.getCenter(extent),
+						zoom: 1.5,
+						maxZoom: 8
+					})
+				});
+				source.on('imageloadstart', function () {
+
+
+					$('#wait_coupe_terrain').show();
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
+
+				});
+				source.on('imageloadend', function () {
+
+<<<<<<< HEAD
+					$('#wait_coupe_trajet').hide();
+=======
+					$('#wait_coupe_terrain').hide();
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
+
+				});
+				source.on('imageloaderror', function () {
+
+<<<<<<< HEAD
+					$('#wait_coupe_trajet').hide();
+=======
+					$('#wait_coupe_terrain').hide();
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
+
+				});
+
+
+
+
+			}
+		});
+
+<<<<<<< HEAD
 		$('#vue_terrain').modal({
 			startingTop: '0%', endingTop: '0%', onOpenEnd: function () {
 
@@ -398,6 +495,9 @@ function init_materialize() {
 			context.change_delay_previ_arpege(+values[handle]);
 			slider_animate.change_delay(context.delay_previ_arpege);
 		});
+=======
+
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
 		apply_language();
 		//M.AutoInit();
 	});
@@ -1100,7 +1200,11 @@ function choix_mode(mymode) {
 			$('#menu_droit').attr('data-target', 'menu1');
 			$('nav div ul li a i:eq( 2 )').addClass('red-text');
 			$('#titre_small_menu').text($_coupe_terrain);
+<<<<<<< HEAD
 			//$('#Lance_coupe_trajet').hide();
+=======
+			$('#Lance_coupe_trajet').hide();
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
 			break;
 		case 'coupe_trajet':
 			mymap.setDrawMode('LineString');

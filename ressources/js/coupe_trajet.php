@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-/home/coto/workspace/Aeroweb_maille_fine/coupe_terrain.php
+<<<<<<< HEAD:coupe_trajet.php
+/home/coto/workspace/Aeroweb_maille_fine/coupe_trajet.php
 =======
 <!DOCTYPE html>
 <html>
@@ -15,7 +15,7 @@
     <script type="text/javascript" src="jquery/jquery-3.1.1.min.js"></script>
     <script src="ressources/js/jquery-localisation.min.js" type="text/javascript" type="text/javascript"></script>
     <script type="text/javascript" src="ol/ol.js"></script>
-   
+
     <script>
         function init() {
 
@@ -25,12 +25,12 @@
             if (search_params.has('language')) $.localise('ressources/js/strings', { language: search_params.get('language')});
             else $.localise('ressources/js/strings', { language: 'fr'});
 
-            let Title = $_coupe_terrain+ " ";
+            let Title = $_coupe_trajet+ " ";
             if (search_params.has('name')) Title+=search_params.get('name');
             else Title+="?????";
-            $('#title_coupe_terrain').html(Title);
+            $('#title_coupe_trajet').html(Title);
 
-            var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
+            var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
             if (search_params.has('url')) url+=search_params.get('url');
             else return false;
 
@@ -45,6 +45,10 @@
 
 
 
+            //let Title = '<?php echo $_GET['name']; ?>';
+            //$('#title_coupe_trajet').html(Title);
+            //var url = 'https://aviation.meteo.fr/wms/vertical-section/path/' + '<?php echo $_GET['url']; ?>';
+
             var source = new ol.source.ImageStatic({
                 url: url,
                 projection: projection,
@@ -53,7 +57,7 @@
             });
 
             var map = new ol.Map({
-                target: 'vue_terrain_ol',
+                target: 'vue_trajet_ol',
                 controls: [],
                 layers: [
                     new ol.layer.Image({
@@ -92,19 +96,19 @@
     <header class="myheader mynav" id='header'>
 
         <img src="ressources/images/logo-mf.png" height='70px' class='left ' alt="">
-        <h4 id='title_coupe_terrain' class='white-text'> </h4>
+        <h4 id='title_coupe_trajet' class='white-text'> </h4>
 
 
     </header>
     <main>
-        <div id='vue_terrain_ol' style='padding:0px;height:650px'>
+        <div id='vue_trajet_ol' style='padding:0px;height:650px'>
 
         </div>
 
 
 
 
-        <div id='wait_coupe_terrain' class="preloader-wrapper big active" style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
+        <div id='wait_coupe_trajet' class="preloader-wrapper big active" style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
             <div class="spinner-layer spinner-blue-only">
                 <div class="circle-clipper left">
                     <div class="circle"></div>
@@ -121,4 +125,4 @@
 </body>
 
 </html>
->>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2:ressources/js/coupe_trajet.php

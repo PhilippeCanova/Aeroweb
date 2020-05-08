@@ -149,8 +149,13 @@ $_E = "E";
 $_O = "O";
 $_symbol_degre = " ";
 $_terrain = "Terrain";
+<<<<<<< HEAD
 $_du = "Du";
 $_au = "Au"
+=======
+$_du = "du";
+$_au = "au"
+>>>>>>> 71a9a1c0118488e76731054791221835be69d1a2
 $_title_hires = '<b>Prévisions modèle maille fine </b>';
 $_title_hires_notice = '(notice sur les champs)';
 $_title_polynesie_notice = 'Légende';
