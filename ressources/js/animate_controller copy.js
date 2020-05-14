@@ -4,8 +4,6 @@ class animate_Controller {
 
 	constructor(target, start, min, max, step, delay, map_controller) {
 
-
-		
 		this.delay = delay; //animation delay
 		this.timer = null; //timer animation
 		this.start = start;
@@ -16,25 +14,19 @@ class animate_Controller {
 		this.slider = document.getElementById(target);
 		this.map_controller = map_controller;
 		noUiSlider.create(this.slider, {
-			
+			start: this.start,
+			step: this.step,
 
 			range: {
 				min: this.min,
 				max: this.max
 			},
-			start: [+this.min ,+this.start , +this.max],
-			tooltips: [{to: function(v){return formatdateutc(new Date(v));}},false,{to: function(v){return formatdateutc(new Date(v));}}],
-			step: this.step,
-			connect: true,
-			animate:false,
 			format: wNumb({
 				decimals: 0
 			})
 		});
 
-		var touch_area = this.slider.querySelectorAll('.noUi-touch-area');
-		if (touch_area[0]) touch_area[0].classList.add('bg_grey');
-		if (touch_area[2]) touch_area[2].classList.add('bg_grey');
+	
 
 
 	}
@@ -43,21 +35,14 @@ class animate_Controller {
 	update(start, min, max, step, delay) {
 
 		var obj = {};
-		let mini = this.getvalue(0);
-		let maxi = this.getvalue(2);
-		let old_min=this.min;
-		let old_max=this.max;
+
+		
 		if (min != this.min) {
-			
 			this.min = min;
-			
 			obj.range = { 'min': this.min, 'max': this.max };
 		}
 		if (max != this.max) {
-			
 			this.max = max;
-			
-			
 			obj.range = { 'min': this.min, 'max': this.max };
 		}
 		if (start < this.min ||start >this.max) {
@@ -74,12 +59,8 @@ class animate_Controller {
 		}
 
 		if (obj != {}) {
-
 			this.slider.noUiSlider.updateOptions(obj);
-			if (delay != this.delay) this.delay = delay;
-			if (mini == old_min) this.setvalue(this.min,0);
-			if (maxi == old_max) this.setvalue(this.max,2);
-
+			this.delay = delay;
 			return true;//changement
 		}
 		else {
@@ -99,41 +80,40 @@ class animate_Controller {
 
 
 	}
-	getvalue(index=1) {
-		if(index == -1) return this.slider.noUiSlider.get();
-		return this.slider.noUiSlider.get()[index];
+	getvalue() {
+		return this.slider.noUiSlider.get();
 	}
-	setvalue(value,index=1) {
-
-		var t= this.getvalue(-1);
-		t[index]=value;
-		this.slider.noUiSlider.set(t);
+	setvalue(value) {
+		this.slider.noUiSlider.set(value);
 
 	}
 	next() {
 
 		if (this.map_controller.mymap.etat == '1') {
-			var v = this.getvalue(1);
-			
+			var v = this.getvalue();
+			//if (v >= this.start) v = +v + this.step;
+			//else 
 			v = +v + this.step;
-			if (v > this.getvalue(2)) v = this.getvalue(0);
+			if (v > this.max) v = this.min;
 			this.setvalue(v);
 		}
 	}
 	prev() {
 		if (this.map_controller.mymap.etat == '1') {
-			var v = this.getvalue(1);
-			
+			var v = this.getvalue();
+			//if (v > this.start) v = +v - this.step;
+			//else 
 			v = +v - this.step;
-			if (v < this.getvalue(0)) v = this.getvalue(2);
+			if (v < this.min) v = this.max;
 			this.setvalue(v);
 		}
 	}
 	end() {
-		this.setvalue(this.getvalue(2));
+
+		this.setvalue(this.max);
 	}
 	first() {
-		this.setvalue(this.getvalue(0));
+		this.setvalue(this.min);
 	}
 	play() {
 		this.next();

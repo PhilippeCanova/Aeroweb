@@ -21,28 +21,7 @@ function get_hPa_by_FL(value) {
 	return ' - FL ' + hpa_fl[value];
 };
 
-function access_direct(origin, side_nav_id) {
 
-	if (origin == "fr") contenu = vigilance_metropole();
-	else if (origin == "ma") contenu = vigilance_martinique();
-	else if (origin == "ga") contenu = vigilance_guadeloupe();
-	else if (origin == "gy") contenu = vigilance_guyanne();
-	else if (origin == "re") contenu = vigilance_reunion();
-	else if (origin == "my") contenu = vigilance_mayotte();
-	else if (origin == "nc") contenu = vigilance_nouvelle_caledonie();
-	else if (origin == "po") contenu = vigilance_polynesie();
-	else if (origin == "sp") contenu = vigilance_saint_pierre_et_miquelon();
-	else contenu = vigilance_metropole();
-
-	localStorage.setItem('liste_coupe_trajet', JSON.stringify([]));
-	localStorage.setItem('liste_coupe_terrain', JSON.stringify([]));
-
-	localisation_is_checked(contenu);
-
-	load_controller();
-	$('#' + side_nav_id).sidenav('close');
-
-}
 
 function vigilance_metropole(latitude = null, longitude = null, zoom = null) {
 	if (latitude == null) latitude = 46.99;
@@ -138,7 +117,8 @@ function vigilance_saint_pierre_et_miquelon(latitude = null, longitude = null, z
 function init_materialize() {
 
 	$(document).ready(function () {
-		$('select').formSelect();
+
+		$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 		$('.sidenav').sidenav({ edge: 'right', draggable: false });
 		$('.collapsible').collapsible();
 		$('.fixed-action-btn').floatingActionButton({ direction: 'left' });
@@ -172,10 +152,10 @@ function init_materialize() {
 				});
 
 
-				//if (coupe_trajet_en_cours.name=="En cours") {
-				coupe_trajet_en_cours.name = "(" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
-				//}
-				$('#title_coupe_trajet').html(coupe_trajet_en_cours.name);
+				if (coupe_trajet_en_cours.name == "En cours") {
+					coupe_trajet_en_cours.name = "(" + coupe_trajet_en_cours.etapes[0].icao + ")->(" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].icao + ")";
+				}
+				$('#title_coupe_trajet').html($_coupe_trajet + " " + coupe_trajet_en_cours.name);
 
 
 
@@ -254,12 +234,11 @@ function init_materialize() {
 					extent: extent
 				});
 
+				if (coupe_terrain_en_cours.name == "En cours") {
+					coupe_terrain_en_cours.name = "(" + coupe_terrain_en_cours.terrain.icao + ")";
+				}
 
-				//if (coupe_trajet_en_cours.name=="En cours") {
-				coupe_terrain_en_cours.name = "(" + coupe_terrain_en_cours.terrain.icao + ")";
-				//}
-
-				$('#title_coupe_terrain').html(coupe_terrain_en_cours.name);
+				$('#title_coupe_terrain').html($_coupe_terrain + " " + coupe_terrain_en_cours.name);
 
 				//var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
 				var url = '';
@@ -324,7 +303,7 @@ function init_materialize() {
 
 			}
 		});
-		var slider = document.getElementById('speed_obs' );
+		var slider = document.getElementById('speed_obs');
 
 		noUiSlider.create(slider, {
 			start: context.delay_obs,
@@ -344,15 +323,16 @@ function init_materialize() {
 
 
 		slider.noUiSlider.on('update', function (values, handle) {
-			$("#value_speed_obs").text((+values[handle] / 1000) + ' '+'seconde(s)');
+			$("#value_speed_obs").text((+values[handle] / 1000) + ' ' + $_seconde);
 			context.change_delay_obs(+values[handle]);
-			slider_animate.change_delay(context.delay_obs);
+			if (slider_animate) slider_animate.change_delay(context.delay_obs);
 		});
+		
 
-		var slider = document.getElementById('speed_previ_arome' );
+		var slider = document.getElementById('speed_previ');
 
 		noUiSlider.create(slider, {
-			start: context.delay_previ_arome,
+			start: context.delay_previ,
 			step: 100,
 			padding: 0,
 			margin: 0,
@@ -369,48 +349,54 @@ function init_materialize() {
 
 
 		slider.noUiSlider.on('update', function (values, handle) {
-			$("#value_speed_previ_arome").text((+values[handle] / 1000) + ' '+'seconde(s)');
-			context.change_delay_previ_arome(+values[handle]);
-			slider_animate.change_delay(context.delay_previ_arome);
-		});
-
-		var slider = document.getElementById('speed_previ_arpege' );
-
-		noUiSlider.create(slider, {
-			start: context.delay_previ_arpege,
-			step: 100,
-			padding: 0,
-			margin: 0,
-			orientation: 'horizontal',
-			range: {
-				min: 100,
-				max: 3000
-			},
-			format: wNumb({
-				decimals: 0
-			})
-		});
+			$("#value_speed_previ").text((+values[handle] / 1000) + ' ' + $_seconde);
+			context.change_delay_previ(+values[handle]);
 
 
-
-		slider.noUiSlider.on('update', function (values, handle) {
-			$("#value_speed_previ_arpege").text((+values[handle] / 1000) + ' '+'seconde(s)');
-			context.change_delay_previ_arpege(+values[handle]);
-			slider_animate.change_delay(context.delay_previ_arpege);
+			if (slider_animate) slider_animate.change_delay(context.delay_previ);
 		});
 		apply_language();
-		//M.AutoInit();
+		
 	});
 
 
 }
+
+
+function force_origin(origin) {
+	if (origin == "fr") contenu = vigilance_metropole();
+	else if (origin == "ma") contenu = vigilance_martinique();
+	else if (origin == "ga") contenu = vigilance_guadeloupe();
+	else if (origin == "gy") contenu = vigilance_guyanne();
+	else if (origin == "re") contenu = vigilance_reunion();
+	else if (origin == "my") contenu = vigilance_mayotte();
+	else if (origin == "nc") contenu = vigilance_nouvelle_caledonie();
+	else if (origin == "po") contenu = vigilance_polynesie();
+	else if (origin == "sp") contenu = vigilance_saint_pierre_et_miquelon();
+	else contenu = vigilance_metropole();
+	localStorage.setItem('localisation', JSON.stringify(contenu));
+	window.location.assign("./index.html");
+}
 function check_localisation() {
+
+
 	if (localStorage.getItem('version') == null || localStorage.getItem('version') != version || localStorage.getItem('localisation') == null) {
 		localStorage.setItem('version', version);
 		init_localisation();
 	}
 
 	else {
+		let href = new URL(location.href);
+		let search_params = new URLSearchParams(href.search);
+
+		if (search_params.has('origin')) {
+			let origin = search_params.get('origin');
+
+			force_origin(origin)
+
+		}
+
+
 		var loc = jQuery.parseJSON(localStorage.getItem('localisation'));
 		localisation_is_checked(loc);
 	}
@@ -461,8 +447,9 @@ function get_vigilance(latitude, longitude, zoom) {
 }
 
 function init_localisation() {
-	localStorage.setItem('liste_coupe_trajet', JSON.stringify([]));
-	localStorage.setItem('liste_coupe_terrain', JSON.stringify([]));
+	
+
+
 	if (navigator && navigator.geolocation) {
 
 		navigator.geolocation.getCurrentPosition(function (position) {
@@ -607,10 +594,13 @@ function init_carto(id_div) {
 				id: 'rrtt',
 				libelle: $_layer_rrtt,
 				menu_id: 'menu_precip',
-				zIndex: 6,
+				zIndex: 7,
 				visible: false
 
 			},
+
+
+
 			{
 				source:
 				{
@@ -624,8 +614,27 @@ function init_carto(id_div) {
 				id: 'ngtt',
 				libelle: $_layer_ngtt,
 				menu_id: 'menu_precip',
-				zIndex: 7,
+				zIndex: 8,
 				visible: false
+
+			},
+			{
+				source:
+				{
+					url: 'http://int-aviation.meteo.fr/wms/map/vertical_section.rflctvt_isobaric',
+					params: { champ: 'vertical_section.rflctvt_isobaric', ELEVATION: 925, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				modele: 'arome',
+				opacity: 0.5,
+				tag: "prevision",
+				id: 'vs_rflt_iso',
+				libelle: $_layer_vs_rflt_iso,
+				menu_id: 'menu_precip',
+				zIndex: 9,
+				visible: false,
+				elevationLevels: { 'min': 500, '11%': 550, '22%': 600, '33%': 650, '44%': 700, '55%': 750, '66%': 800, '77%': 850, '88%': 900, 'max': 925 },
+				elevationUnit: 'hpa'
 
 			},
 			{
@@ -641,7 +650,7 @@ function init_carto(id_div) {
 				id: 'gafor_visi_metro',
 				libelle: $_layer_visi_metro,
 				menu_id: 'menu_aero',
-				zIndex: 8,
+				zIndex: 10,
 				visible: false
 
 			},
@@ -658,7 +667,7 @@ function init_carto(id_div) {
 				id: 'gafor_plafond_metro',
 				libelle: $_layer_plafond_metro,
 				menu_id: 'menu_aero',
-				zIndex: 9,
+				zIndex: 11,
 				visible: false
 
 			},
@@ -675,7 +684,7 @@ function init_carto(id_div) {
 				id: 'h_coulim',
 				libelle: $_layer_hcl,
 				menu_id: 'menu_aero',
-				zIndex: 10,
+				zIndex: 12,
 				visible: false
 
 			},
@@ -692,12 +701,32 @@ function init_carto(id_div) {
 				id: 'vv2_isobaric',
 				libelle: $_layer_vv2,
 				menu_id: 'menu_aero',
-				zIndex: 11,
+				zIndex: 13,
 				visible: false,
 				elevationLevels: { 'min': 300, '7%': 350, '14%': 400, '21%': 450, '28%': 500, '35%': 550, '42%': 600, '50%': 650, '57%': 700, '64%': 750, '71%': 800, '78%': 850, '85%': 900, '89%': 925, '92%': 950, 'max': 1000 },
 				elevationUnit: 'hpa'
 
 			},
+			{
+				source:
+				{
+					url: 'http://int-aviation.meteo.fr/wms/map/vertical_section.hu_isobaric',
+					params: { champ: 'vertical_section.hu_isobaric', ELEVATION: 1000, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				modele: 'arome',
+				opacity: 0.6,
+				tag: "prevision",
+				id: 'vs_hu_iso',
+				libelle: $_layer_hu,
+				menu_id: 'menu_nuage',
+				zIndex: 6,
+				visible: false,
+				elevationLevels: { 'min': 500, '9%': 550, '18%': 600, '27%': 650, '36%': 700, '45%': 750, '54%': 800, '63%': 850, '72%': 900, '81': 925, '90%': 950, 'max': 1000 },
+				elevationUnit: 'hpa'
+
+			}
+			,
 			{
 				source:
 				{
@@ -711,7 +740,7 @@ function init_carto(id_div) {
 				id: 'sat_isp',
 				libelle: $_layer_sat_isp,
 				menu_id: 'menu_nuage',
-				zIndex: 12,
+				zIndex: 14,
 				visible: false
 
 			},
@@ -728,7 +757,7 @@ function init_carto(id_div) {
 				id: 'nebul_bas',
 				libelle: $_layer_nebul_bas,
 				menu_id: 'menu_nuage',
-				zIndex: 13,
+				zIndex: 15,
 				visible: false
 
 			},
@@ -745,7 +774,7 @@ function init_carto(id_div) {
 				id: 'nebul_moyen',
 				libelle: $_layer_nebul_moyen,
 				menu_id: 'menu_nuage',
-				zIndex: 14,
+				zIndex: 16,
 				visible: false
 
 			},
@@ -762,7 +791,7 @@ function init_carto(id_div) {
 				id: 'nebul_haut',
 				libelle: $_layer_nebul_haut,
 				menu_id: 'menu_nuage',
-				zIndex: 15,
+				zIndex: 17,
 				visible: false
 
 			},
@@ -779,7 +808,7 @@ function init_carto(id_div) {
 				id: 't_arpege',
 				libelle: $_t_layer_arpege,
 				menu_id: 'menu_analyse_generale',
-				zIndex: 16,
+				zIndex: 18,
 				visible: false,
 				elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
 				elevationUnit: 'hpa'
@@ -798,7 +827,7 @@ function init_carto(id_div) {
 				id: 'z_arpege',
 				libelle: $_z_layer_arpege,
 				menu_id: 'menu_analyse_generale',
-				zIndex: 17,
+				zIndex: 19,
 				visible: false,
 				elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
 				elevationUnit: 'hpa'
@@ -890,13 +919,13 @@ function init_carto(id_div) {
 	$('#menu_aero').html('');
 	$('#menu_imagerie').html('');
 	$('#menu_analyse_generale').html('');
-	$('#cpt_layer_menu_vent').html('0' );
-	$('#cpt_layer_menu_precip').html('0' );
-	$('#cpt_layer_menu_nuage').html('0' );
-	$('#cpt_layer_menu_tempe').html('0' );
-	$('#cpt_layer_menu_aero').html('0' );
-	$('#cpt_layer_menu_imagerie').html('0' );
-	$('#cpt_layer_menu_analyse_generale').html('0' );
+	$('#cpt_layer_menu_vent').html('0');
+	$('#cpt_layer_menu_precip').html('0');
+	$('#cpt_layer_menu_nuage').html('0');
+	$('#cpt_layer_menu_tempe').html('0');
+	$('#cpt_layer_menu_aero').html('0');
+	$('#cpt_layer_menu_imagerie').html('0');
+	$('#cpt_layer_menu_analyse_generale').html('0');
 
 	$.each(t_layer[localisation.origin], function (key, layer) {
 
@@ -1010,8 +1039,8 @@ function init_carto(id_div) {
 
 			var t = $("input[data_model='arpege']:checked");
 			if (context.mode == 'prevision') {
-				if (t.length > 0) slider_animate.update(context.date_start_previ_arpege, context.date_min_previ_arpege, context.date_max_previ_arpege, context.step_previ_arpege, context.delay_previ_arpege);
-				else slider_animate.update(context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ_arome);
+				if (t.length > 0) slider_animate.update(context.date_start_previ_arpege, context.date_min_previ_arpege, context.date_max_previ_arpege, context.step_previ_arpege, context.delay_previ);
+				else slider_animate.update(context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ);
 			}
 		});
 
@@ -1024,7 +1053,7 @@ function init_carto(id_div) {
 
 	});
 
-	
+
 
 
 
@@ -1127,10 +1156,10 @@ function choix_mode(mymode) {
 			$('#titre_small_menu').text($_previsions);
 			var t = $("input[data_model='arpege']:checked");
 			if (t.length > 0) {
-				slider_animate.update(context.date_start_previ_arpege, context.date_min_previ_arpege, context.date_max_previ_arpege, context.step_previ_arpege, context.delay_previ_arpege);
+				slider_animate.update(context.date_start_previ_arpege, context.date_min_previ_arpege, context.date_max_previ_arpege, context.step_previ_arpege, context.delay_previ);
 
 			}
-			else slider_animate.update(context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ_arome);
+			else slider_animate.update(context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ);
 
 			//$('#Lance_coupe_trajet').hide();
 			break;
@@ -1161,7 +1190,7 @@ function choix_mode(mymode) {
 			$('#titre_small_menu').text($_menu_preferences);
 			//$('#Lance_coupe_trajet').hide();
 			break;
-			
+
 	}
 
 
@@ -1260,7 +1289,7 @@ function apply_language() {
 	$('#menu_preference_language select option')[0].innerText = $_francais;
 	$('#menu_preference_language select option')[1].innerText = $_anglais;
 	$('#menu_preference_language select').val(context.language);
-	$('#menu_preference_language select').formSelect();
+	$('#menu_preference_language select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 
 	$('#nav-mobile li a label')[0].innerText = $_observations;
 	$('#nav-mobile li a label')[1].innerText = $_previsions;
@@ -1274,7 +1303,9 @@ function apply_language() {
 	$('#small_menu li a:eq( 3 )').text($_coupe_trajet);
 	$('#small_menu li a:eq( 4 )').text($_menu_preferences);
 
+	$('#menu4 > div > label').text($_speed_animation_obs);
 
+	$('#menu3 > div:eq( 2 ) > label:eq( 0 )').text($_speed_animation_previ);
 
 	$('#menu_preference_geo label')[0].innerText = $_choix_geo;
 	$('#menu_preference_geo select option')[0].innerText = $_fr;
@@ -1288,7 +1319,7 @@ function apply_language() {
 	$('#menu_preference_geo select option')[8].innerText = $_sp;
 
 	$('#menu_preference_geo select').val(localisation.origin);
-	$('#menu_preference_geo select').formSelect();
+	$('#menu_preference_geo select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 	$('#menu_preference_repere label')[0].innerText = $_choix_repere;
 
 	$('#menu_preference_repere select option:eq( 0 )').text($_repere_dep);
@@ -1301,7 +1332,7 @@ function apply_language() {
 	$('#menu_preference_repere select option:eq( 2 )').prop('selected', false);
 	$('#menu_preference_repere select option:eq( 3 )').prop('selected', false);
 
-	$('#menu_preference_repere select').formSelect();
+	$('#menu_preference_repere select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 	$('#id_version').text($_version + " " + version)
 
 	$('#label_choix_run_arome').text($_label_choix_run_arome);
@@ -1313,7 +1344,7 @@ function apply_language() {
 	maj_liste_trajet_enregistre();
 	maj_liste_terrain_enregistre();
 
-	$('select').formSelect();
+	$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 
 
 
@@ -1325,7 +1356,7 @@ function maj_liste_trajet_enregistre(name = "") {
 	$('#menu2 div:eq( 0 ) select').children('option').remove();
 
 
-	let t = localStorage.getItem('liste_coupe_trajet');
+	let t = localStorage.getItem('liste_coupe_trajet_' + localisation.origin);
 
 	if (t == null) {
 
@@ -1366,7 +1397,7 @@ function maj_liste_trajet_enregistre(name = "") {
 		}
 
 	}
-	$('select').formSelect();
+	$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 }
 function maj_liste_terrain_enregistre(name = "") {
 
@@ -1374,7 +1405,7 @@ function maj_liste_terrain_enregistre(name = "") {
 	$('#menu1 div:eq( 0 ) select').children('option').remove();
 
 
-	let t = localStorage.getItem('liste_coupe_terrain');
+	let t = localStorage.getItem('liste_coupe_terrain_' + localisation.origin);
 
 	if (t == null) {
 
@@ -1415,7 +1446,7 @@ function maj_liste_terrain_enregistre(name = "") {
 		}
 
 	}
-	$('select').formSelect();
+	$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 }
 function load_trajet_from_storage(index) {
 	if (coupe_trajet_en_cours == null) {
@@ -1437,11 +1468,13 @@ function init_animate(id_slider) {
 
 
 
-	slider_animate = new animate_Controller(id_slider, context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ_arome, mymap);
+	slider_animate = new animate_Controller(id_slider, context.date_start_previ_arome, context.date_min_previ_arome, context.date_max_previ_arome, context.step_previ_arome, context.delay_previ, mymap);
 
 	$('#echeance_string').html(formatdateutc(context.date_reference));
 	slider_animate.slider.noUiSlider.on('update', function (values, handle) {
 
+
+		if (handle != 1) return;
 		if (mymap == null) return;
 
 		var d = new Date(+values[handle]);
@@ -1475,15 +1508,17 @@ function load_controller() {
 	if (slider_run_arome == null) init_slider_run_arome('switch_run_prevision_arome');
 
 	if (slider_run_arpege == null) init_slider_run_arpege('switch_run_prevision_arpege');
+	//context.mode='prevision';
 	choix_mode(context.mode);
+	$('#menu5').sidenav('close');
+	
 
 }
 
 
 
 function open_vertical_profil(coord) {
-	console.log('Lance une coupe terrain avec les coordonnées:');
-	console.log(ol.proj.toLonLat(coord, 'EPSG:3857'));
+	
 	var obj = {};
 	let p = ol.proj.toLonLat(coord, 'EPSG:3857');
 	obj.lon = p[0];
@@ -1509,6 +1544,7 @@ function start_track_profil() {
 
 
 	if (coupe_trajet_en_cours) coupe_trajet_en_cours.remove(maj_coupe_trajet_en_cours);
+	maj_liste_trajet_enregistre();
 }
 function open_track_profil(coord) {
 
@@ -1538,7 +1574,8 @@ function open_track_profil(coord) {
 
 		coupe_trajet_en_cours.update(t);
 	}
-	maj_liste_trajet_enregistre();
+	
+	//maj_liste_trajet_enregistre($('#menu2 div:eq( 0 ) select').val());
 	$('#menu2').sidenav('open');
 
 
@@ -1590,10 +1627,10 @@ function Valider_trajet_oaci() {
 }
 function Valider_terrain_oaci() {
 	let coords_tracage = null;
-	
+
 	let erreur = false;
 	var feature = mymap.sourcePoint.getFeatures()[0];
-	console.log(coupe_terrain_en_cours);
+	
 	let key = $('#terrain').val().toUpperCase();
 	let search = null;
 	$.each(coupe_terrain_en_cours.list, function (i, v) {
@@ -1602,25 +1639,25 @@ function Valider_terrain_oaci() {
 
 		if (v.icao == key) { search = v; return false; }
 	});
-	
+
 	if (search) {
-		
-		coords_tracage=ol.proj.fromLonLat([search.lon, search.lat], 'EPSG:3857');
+
+		coords_tracage = ol.proj.fromLonLat([search.lon, search.lat], 'EPSG:3857');
 		//coords_tracage.push([search.lon, search.lat]);
 
 
 	} else {
 		$('#menu1_content main div div i:eq( ' + 0 + ' )').addClass('red-text');
-		
+
 		return false;
 
 	}
-	
+
 	coupe_terrain_en_cours.terrain = search;
-	
+
 	feature.getGeometry().setCoordinates(coords_tracage);
 	mymap.mymap.getView().setCenter(coords_tracage);
-	
+
 	return true;
 
 }

@@ -19,14 +19,14 @@ class coupe_trajet_Controller {
         this.parametres = { hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, iso_hcl: false, uv_alt: true };
         this.duree = 1000 * 60 * 60;
         this.fl = '100';
-        this.depart= null;
+        this.depart = null;
         this.render();
 
 
     }
     update(t_etapes) {
 
-      
+
         let me = this;
         if (t_etapes.length == me.etapes.length) {
             $.each(t_etapes, function (k, v) {
@@ -39,31 +39,34 @@ class coupe_trajet_Controller {
                 }
             });
         }
-        else{
-            me.etapes.splice(0,me.etapes.length);
-            me.list.splice(0,me.list.length);
+        else {
+            me.etapes.splice(0, me.etapes.length);
+            me.list.splice(0, me.list.length);
             $.each(t_etapes, function (k, v) {
 
-                
-                    me.etapes[k] = v;
-                    me.list[k]=[v] ;
-                
+
+                me.etapes[k] = v;
+                me.list[k] = [v];
+
             });
 
 
 
         }
         this.render();
-       
+
     }
     load_from_storage(index) {
-        if (localStorage.getItem('liste_coupe_trajet') == null) {
+        if (localStorage.getItem('liste_coupe_trajet_'+localisation.origin) == null) {
 
             return;
         }
         else {
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet'))[index];
+
+            //console.log(jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin)));
+            //console.log(index);
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin))[index];
 
             this.name = t.name;
             this.etapes = t.etapes;
@@ -72,62 +75,62 @@ class coupe_trajet_Controller {
             this.parametres = t.parametres;
             this.duree = t.duree;
             this.fl = t.fl;
-            
+
             this.render();
         }
 
     }
     save(name = "") {
 
-      
+
         this.name = name;
         this.date = Date.now();
-        if (localStorage.getItem('liste_coupe_trajet') == null) {
+        if (localStorage.getItem('liste_coupe_trajet_'+localisation.origin) == null) {
 
             var t = [this];
 
         }
         else {
 
-          
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet'));
-            
+
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin));
+
 
 
             let i = 0;
 
             $.each(t, function (k, v) {
                 i = k;
-                
-                if (v.name == name) {  return false; }
+
+                if (v.name == name) { return false; }
                 i++;
             });
-           
+
             t.splice(i, 1, this);
+
+
+            if (t.length > 5) {
+
+                let date_min = Date.now();
+                let i = null;
+                $.each(t, function (k, v) {
+
+                    if (v.date <= date_min) {
+                        date_min = v.date;
+
+                        i = k;
+                    }
+
+                });
+
+                if (i != null) t.splice(i, 1);
+
+            }
         }
 
-        if (t.length > 5) {
-          
-            let date_min = Date.now();
-            let i = null;
-            $.each(t, function (k, v) {
-              
-                if (v.date <= date_min) {
-                    date_min = v.date;
-                   
-                    i = k;
-                }
 
-            });
-           
-            if (i != null) t.splice(i, 1);
-
-        }
-
-
-
-        localStorage.setItem('liste_coupe_trajet', JSON.stringify(t))
+        localStorage.setItem('liste_coupe_trajet_'+localisation.origin, JSON.stringify(t))
 
     }
     remove_etape(key) {
@@ -148,8 +151,9 @@ class coupe_trajet_Controller {
 
     }
     render() {
-      
-        var html = '<main>';
+
+
+        var html = '';
         var me = this;
         if (this.etapes != null && this.etapes.length >= 2) {
             var me = this;
@@ -208,7 +212,7 @@ class coupe_trajet_Controller {
             html += "<div class='row ' style='margin-left:0.25rem;margin-right:0.25rem;'>";
 
             html += "<div class='input-field col s12'>";
-            html += "<select multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;\">";
+            html += "<select id='choix_layer_trajet' multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;\">";
             html += "<option value='hu' ";
             this.parametres.hu == true ? html += 'selected' : html += '';
             html += ">" + $_hu + "</option>";
@@ -278,11 +282,8 @@ class coupe_trajet_Controller {
             html += "</div>";
             html += "</li>";
             html += "</ul>";
-            html += "</main>";
 
-
-            html += "<footer class='myfooter' style='height:85px;'>";
-            html += "<div class='row mynav'>";
+            html += "<div class='row mynav' style='margin-bottom: 60px;'>";
             html += "<div class='col s6 center'>";
             html += " <a href='#!' onclick=\"if (Valider_trajet_oaci()) $('#vue_trajet').modal('open');\"><i class='mybutton Small material-icons'>check</i></a>";
             html += "</div>";
@@ -291,16 +292,20 @@ class coupe_trajet_Controller {
             html += "</div>";
 
             html += "</div>";
-            html += "</footer>";
+
 
             $('#' + this.id_cible).html(html)
 
 
             $('#collapsible_trajet').collapsible();
-           
 
-            $('select').formSelect();
+
+            
+
+            
+
             M.updateTextFields();
+            $('select').formSelect({classes: 'leftplus',  dropdownOptions: {coverTrigger: false}});
 
             var dateSlider = document.getElementById('slider_echeance_trajet');
             noUiSlider.create(dateSlider, {
@@ -351,7 +356,7 @@ class coupe_trajet_Controller {
 
                 $('#etape' + key).on('change', function () {
 
-                  
+
                     let oaci = $('#etape' + key).val().toUpperCase();
                     let search = false;
                     $.each(me.list[key], function (i, v) {

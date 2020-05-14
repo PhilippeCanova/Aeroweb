@@ -23,13 +23,13 @@ class coupe_terrain_Controller {
 
     }
     load_from_storage(index) {
-        if (localStorage.getItem('liste_coupe_terrain') == null) {
+        if (localStorage.getItem('liste_coupe_terrain_'+localisation.origin) == null) {
 
             return;
         }
         else {
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain'))[index];
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_'+localisation.origin))[index];
 
             this.name = t.name;
             this.terrain = t.terrain;
@@ -48,7 +48,7 @@ class coupe_terrain_Controller {
 
         this.name = name;
         this.date = Date.now();
-        if (localStorage.getItem('liste_coupe_terrain') == null) {
+        if (localStorage.getItem('liste_coupe_terrain_'+localisation.origin) == null) {
 
             var t = [this];
 
@@ -57,7 +57,7 @@ class coupe_terrain_Controller {
 
 
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain'));
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_'+localisation.origin));
 
 
 
@@ -93,13 +93,14 @@ class coupe_terrain_Controller {
 
 
 
-        localStorage.setItem('liste_coupe_terrain', JSON.stringify(t))
+        localStorage.setItem('liste_coupe_terrain_'+localisation.origin, JSON.stringify(t))
 
     }
 
     render() {
 
-        var html = '<main>';
+       
+        var html='';
         var me = this;
         html += "<div class='row ' >";
 
@@ -168,14 +169,11 @@ class coupe_terrain_Controller {
         html += "</select>";
         html += "<label>" + $_niveau_de_vol + "</label>";
         html += "</div>";
+        html += "</div>";
 
 
 
 
-        html += "</main>";
-
-
-        html += "<footer class='myfooter' style='height:85px;'>";
         html += "<div class='row mynav'>";
         html += "<div class='col s6 center'>";
         html += " <a href='#!' onclick=\"if (Valider_terrain_oaci()) $('#vue_terrain').modal('open');\"><i class='mybutton Small material-icons'>check</i></a>";
@@ -185,15 +183,15 @@ class coupe_terrain_Controller {
         html += "</div>";
 
         html += "</div>";
-        html += "</footer>";
-
+        
         $('#' + this.id_cible).html(html)
 
 
 
 
 
-        $('select').formSelect();
+        $('select').formSelect({classes: 'leftplus', dropdownOptions: {coverTrigger: false}});
+        
         M.updateTextFields();
 
         var dateSlider = document.getElementById('slider_echeance_terrain');

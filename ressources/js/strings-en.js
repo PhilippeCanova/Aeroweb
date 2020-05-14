@@ -18,15 +18,7 @@ $_layer_elevationLabel = 'Level';
 
 $_layer_t = 'Temperature';
 $_layer_td = 'Td 2m';
-$_layer_rrtt = 'Precipitations totales';
-
-$_layer_ngtt = 'Total cumulative snowfall';
-$_layer_visi_metro = 'Visibility';
-$_layer_plafond_metro = 'Plafond';
-$_layer_sat_isp = 'Satellite Imagery forecast';
-$_layer_nebul_bas = 'Lower-level clouds';
-$_layer_nebul_moyen = 'Middle-level clouds';
-$_layer_nebul_haut = 'High-level clouds';
+$_layer_rrtt = 'Precipitations totales';Températures
 $_coupe_terrain = "Time-section plot";
 $_coupe_trajet = "Cross-section route";
 $_parametres = "Parameters";
@@ -153,7 +145,10 @@ $_symbol_degre = " ";
 $_terrain = "Airfield";
 $_du = "From";
 $_au = "To"
+$_speed_animation_obs = "Observation animation speed";
+$_speed_animation_previ = "Forcast animation speed";
 
+$_seconde ="second(s)";
 $_title_hires = '<b>High resolution forecasts </b>';
 $_title_hires_notice = '(instructions about fields model forecast)';
 $_title_polynesie_notice = 'Legend';
