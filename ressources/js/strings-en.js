@@ -15,10 +15,10 @@ $_layer_uv_alt = 'Upper wind';
 $_layer_rafale = 'Wind gust 10m (kt)';
 $_layer_opacityLabel = 'Opacity';
 $_layer_elevationLabel = 'Level';
-
+$_layer_ngtt = 'Total cumulative snowfall';
 $_layer_t = 'Temperature';
 $_layer_td = 'Td 2m';
-$_layer_rrtt = 'Precipitations totales';Températures
+$_layer_rrtt = 'Precipitations totales';
 $_coupe_terrain = "Time-section plot";
 $_coupe_trajet = "Cross-section route";
 $_parametres = "Parameters";
@@ -210,3 +210,12 @@ $_fl = 'Maximum Fligh level : ';
 $_submit = 'Submit';
 $_open_section = 'Open cross-section';
 $_averts_sigmets = '<center><h3>AVERTISSEMENT</h3><h4>Experimental products</h4>Does not replace the consultation of SIGMET in the Messages section.<br><br>VA and TC SIGMET are not shown in this display.'
+
+
+$_layer_vs_rflt_iso="Precipitations"
+$_layer_visi_metro="Visibility"
+$_layer_plafond_metro="Aeronautic ceiling"
+$_layer_sat_isp="Satellite Imagery forceast"
+$_layer_nebul_bas="Lower-level clouds"
+$_layer_nebul_moyen = "Middle-level clouds";
+$_layer_nebul_haut = "High-level clouds";

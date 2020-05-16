@@ -67,7 +67,9 @@ ul.dropdown-content.select-dropdown li span {
 	color: grey;
 
 }
-
+.dropdown-content li > span{
+	font-size: 14px;
+}
 .label-title
 {
 color: grey;
@@ -143,4 +145,9 @@ border-radius: 3px;
 }
 .bg_grey{
 	background-color: grey;
+}
+
+
+.sidenav .collapsible-body {
+	background-color: transparent !important;
 }

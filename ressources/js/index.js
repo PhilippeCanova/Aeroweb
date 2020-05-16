@@ -11,9 +11,9 @@ var version = '1.0';
 var context = new context_Controller();
 
 hpa_fl = {
-	'300': '300', '350': '265', '400': '240', '450': '210', '500': '180', '550': '160',
+	'300': '300', '350': '270', '400': '240', '450': '210', '500': '180', '550': '160',
 	'600': '140', '650': '120', '700': '100', '750': '080', '800': '065', '850': '050',
-	'900': '045', '925': '035', '950': '025', '1000': '005'
+	'900': '030', '925': '027', '950': '020'
 }
 
 function get_hPa_by_FL(value) {
@@ -375,7 +375,7 @@ function force_origin(origin) {
 	else if (origin == "sp") contenu = vigilance_saint_pierre_et_miquelon();
 	else contenu = vigilance_metropole();
 	localStorage.setItem('localisation', JSON.stringify(contenu));
-	window.location.assign("./index.html");
+	//window.location.assign("./index.html");
 }
 function check_localisation() {
 
@@ -392,7 +392,8 @@ function check_localisation() {
 		if (search_params.has('origin')) {
 			let origin = search_params.get('origin');
 
-			force_origin(origin)
+			force_origin(origin);
+			
 
 		}
 
@@ -952,8 +953,9 @@ function init_carto(id_div) {
 
 
 		p += "</div>";
-
-		p += "<div class='col s4 '><span id=\"value_opacity_" + layer.id + "\" class='small_span '>Opacite</span></div><div id=\"opacity_" + layer.id + "\" class='col s7 blue'></div>";
+		p += "<div class='col s2 '></div>";
+		p += "<div class='col s4 '><span id=\"value_opacity_" + layer.id + "\" class='small_span '>Opacite</span></div><div id=\"opacity_" + layer.id + "\" class='col s5 blue'></div>";
+		p += "<div class='col s1 '></div>";
 
 		if (layer.elevationUnit && layer.elevationLevels) {
 			p += "<div class='input-field col s12'id=\"level_" + layer.id + "\"><select  >";
@@ -968,7 +970,8 @@ function init_carto(id_div) {
 
 
 		$('#' + layer.menu_id).append(p);
-
+		$('select').formSelect({classes: 'leftplus', dropdownOptions: {coverTrigger: false}});
+      
 		var slider = document.getElementById('opacity_' + layer.id);
 
 		noUiSlider.create(slider, {
