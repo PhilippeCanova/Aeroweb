@@ -4,7 +4,7 @@
 <head>
   <link rel="shortcut icon" type="image/png" href="./favicon.ico" />
   <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
   <link type="text/css" rel="stylesheet" href="nouislider/nouislider.min.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="ol/ol.css" />
@@ -48,7 +48,7 @@
 
       <ul class="collapsible">
         <li>
-          <div class="collapsible-header"><i class="material-icons">local_airport</i><span>aero</span><span
+          <div class="collapsible-header"><i class="material-icons icon-skyatlas"></i><span>aero</span><span
               id='cpt_layer_menu_aero' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_aero'>
           </div>
@@ -57,7 +57,7 @@
         <li class="active">
           <div class="collapsible-header">
             <!--<i class="material-icons">explore</i>-->
-            <img style='width:30px;height:30px;margin-top:10px;margin-right:10px;'src='./ressources/images/vent.png'>
+            <i class="material-icons icon-wind"></i>
             <span>Vent</span><span
               id='cpt_layer_menu_vent' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_vent'>
@@ -70,14 +70,14 @@
           </div>
         </li>
         <li>
-          <div class="collapsible-header"><i class="material-icons">grain</i><span>Pluie</span><span
+          <div class="collapsible-header"><i class="material-icons icon-droplet"></i><span>Pluie</span><span
               id='cpt_layer_menu_precip' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_precip'>
           </div>
         </li>
 
         <li>
-          <div class="collapsible-header"><i class="material-icons">wb_sunny</i><span>tempe</span><span
+          <div class="collapsible-header"><i class="material-icons icon-thermometer-3"></i><span>tempe</span><span
               id='cpt_layer_menu_tempe' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_tempe'>
           </div>
@@ -102,7 +102,7 @@
 
       <ul class="collapsible">
         <li>
-          <div class="collapsible-header"><i class="material-icons">album</i><span>Analyse_generale</span><span
+          <div class="collapsible-header"><i class="material-icons icon-earth"></i><span>Analyse_generale</span><span
               id='cpt_layer_menu_analyse_generale' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_analyse_generale'>
           </div>
@@ -157,8 +157,7 @@
       <h5 id="id_version">Version 1.0</h5>
       <div id='menu_preference_language' class="input-field col s12">
 
-        
-        <!--TODO philippe <select onchange="window.location.assign('./index.html?language='+$(this).val())">-->
+
         <select onchange="window.location.assign('./index.html?language='+$(this).val())">
           <option value='fr' selected>Francais</option>
           <option value='en'>Anglais</option>
