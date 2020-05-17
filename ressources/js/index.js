@@ -18,7 +18,7 @@ hpa_fl = {
 
 function get_hPa_by_FL(value) {
 	if (typeof (hpa_fl[value]) == 'undefined') { return ''; }
-	return ' - FL ' + hpa_fl[value];
+	return ' - FL' + hpa_fl[value];
 };
 
 
