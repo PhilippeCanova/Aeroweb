@@ -188,6 +188,7 @@ i, .icomoon-liga {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 .icon-wind:before {
   content: "\e900";
 }
@@ -200,6 +201,9 @@ i, .icomoon-liga {
 .icon-thermometer-three-quarters:before {
   content: "\f2c8";
 }
+.icon-pause:before {
+  content: "\e915";
+}
 .icon-play_arrow:before {
   content: "\e901";
 }
@@ -209,8 +213,14 @@ i, .icomoon-liga {
 .icon-skip_previous:before {
   content: "\e903";
 }
+.icon-web_asset:before {
+  content: "\e916";
+}
 .icon-location_on:before {
   content: "\e904";
+}
+.icon-clear:before {
+  content: "\e917";
 }
 .icon-save:before {
   content: "\e905";
@@ -232,6 +242,9 @@ i, .icomoon-liga {
 }
 .icon-edit_location:before {
   content: "\e90b";
+}
+.icon-cancel:before {
+  content: "\e918";
 }
 .icon-check:before {
   content: "\e90c";

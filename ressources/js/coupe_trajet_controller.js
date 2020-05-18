@@ -265,13 +265,13 @@ class coupe_trajet_Controller {
             html += ">700 hPa"+ get_hPa_by_FL('700')+"</option>";
             html += "<option value='200' ";
             this.fl == '200' ? html += 'selected' : html += '';
-            html += ">FL200</option>";
+            html += ">465 hPa"+ get_hPa_by_FL('465')+"</option>";
             html += "<option value='300' ";
             this.fl == '300' ? html += 'selected' : html += '';
             html += ">300 hPa"+ get_hPa_by_FL('300')+"</option>";
             html += "<option value='400' ";
             this.fl == '400' ? html += 'selected' : html += '';
-            html += ">FL400</option>";
+            html += ">185 hPa"+ get_hPa_by_FL('185')+"</option>";
 
             html += "</select>";
             html += "<label>" + $_niveau_de_vol + "</label>";
