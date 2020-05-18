@@ -953,8 +953,7 @@ function init_carto(id_div) {
 
 
 		p += "</div>";
-		p += "<div class='col s2 '></div>";
-		p += "<div class='col s4 '><span id=\"value_opacity_" + layer.id + "\" class='small_span '>Opacite</span></div><div id=\"opacity_" + layer.id + "\" class='col s5 blue'></div>";
+		p += "<div class='col s4 offset-s2'><span id=\"value_opacity_" + layer.id + "\" class='small_span '>Opacite</span></div><div id=\"opacity_" + layer.id + "\" class='col s5 blue'></div>";
 		p += "<div class='col s1 '></div>";
 
 		if (layer.elevationUnit && layer.elevationLevels) {
