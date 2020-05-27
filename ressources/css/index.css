@@ -219,8 +219,14 @@ i, .icomoon-liga {
 .icon-location_on:before {
   content: "\e904";
 }
+.icon-add:before {
+  content: "\e919";
+}
 .icon-clear:before {
   content: "\e917";
+}
+.icon-remove:before {
+  content: "\e91a";
 }
 .icon-save:before {
   content: "\e905";
