@@ -139,12 +139,14 @@
 
     </div>
     <div id="menu4" class="sidenav collapsible">
+      <ul class="collapsible">
       <li class="active">
         <div class="collapsible-header"><i class="material-icons">remove_red_eye</i><span>Observationaaa</span><span
             id='cpt_layer_menu_imagerie' class="cpt_layer badge">0</span></div>
         <div class="collapsible-body row" id='menu_imagerie'>
         </div>
       </li>
+    </ul>
 <hr>
       <div class='row'>
         <label class='label-title col s12 center'>Vitesse animation observation</label>
@@ -167,7 +169,7 @@
         <label>Choisissez la langue</label>
       </div>
       <div id='menu_preference_geo' class="input-field col s12">
-        <select onchange="force_origin($(this).val());">
+        <select onchange="force_origin($(this).val());window.location.assign('./index.html');">
           <option value='fr' selected>Métropole</option>
           <option value='re'>Réunion</option>
           <option value='my'>Mayotte/option>

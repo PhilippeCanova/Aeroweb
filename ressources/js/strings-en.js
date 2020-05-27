@@ -147,6 +147,8 @@ $_du = "From";
 $_au = "To"
 $_speed_animation_obs = "Observation animation speed";
 $_speed_animation_previ = "Forcast animation speed";
+$_choix_date_arome = "Choice of the date of the fine mesh model";
+$_choix_date_arpege = "Choice of the date of the extended model";
 
 $_seconde ="second(s)";
 $_title_hires = '<b>High resolution forecasts </b>';

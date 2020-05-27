@@ -11,8 +11,8 @@ var version = '1.0';
 var context = new context_Controller();
 
 hpa_fl = {
-	'175': '410', '185': '400', '300': '300', '350': '270', '400': '240', '450': '210', 
-	'465':'200', '500': '180', '550': '160', '600': '140', '650': '120', '700': '100', 
+	'175': '410', '185': '400', '300': '300', '350': '270', '400': '240', '450': '210',
+	'465': '200', '500': '180', '550': '160', '600': '140', '650': '120', '700': '100',
 	'750': '080', '800': '065', '850': '050', '900': '030', '925': '027', '950': '020'
 }
 
@@ -72,8 +72,8 @@ function vigilance_mayotte(latitude = null, longitude = null, zoom = null) {
 
 	if (latitude == null) latitude = -12.79;
 	if (longitude == null) longitude = 45.14;
-	if (zoom == null) zoom = 11;
-	var extent = [44, -13.20, 46, -12];
+	if (zoom == null) zoom = 9;
+	var extent = [42, -15.20, 48, -10];
 
 	var contenu = { origin: 'my', center: { lat: latitude, lon: longitude }, extent: extent, zoom_factor: zoom, picto: 'http://vigilance.meteofrance.com/data/PBVV98_FMEE_.png', text: "<strong>Vigilance<br>Mayotte</strong>", link: 'http://www.meteofrance.yt/vigilance-mayotte', masque_vigilance: 'masque_mayotte.png' };
 	return contenu;
@@ -160,41 +160,47 @@ function init_materialize() {
 
 
 
-				//var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
 				var url = '';
-				url += coupe_trajet_en_cours.etapes[0].lat + "/" + coupe_trajet_en_cours.etapes[0].lon + "/";
-				url += coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lat + "/" + coupe_trajet_en_cours.etapes[coupe_trajet_en_cours.etapes.length - 1].lon + "/";
+				$.each(coupe_trajet_en_cours.etapes, function (k, v) {
+					if (url != '') url += ",";
+					url += v.lat + ',' + v.lon;
+				});
+				url += "/";
 				url += coupe_trajet_en_cours.depart / 1000 + '/' + coupe_trajet_en_cours.duree / (1000 * 60 * 60) + '/';
 				url += coupe_trajet_en_cours.fl + '/';
+
+				let service_wms = 'https://int-aviation.meteo.fr/'
 				let p = '';
+				let t_layer = [];
+
+
 				$.each(coupe_trajet_en_cours.parametres, function (k, v) {
 					if (p != '' && v) p += "," + k;
 					else if (p == '' && v) p += k;
+
+					if (v) t_layer.push(new ol.layer.Image({
+						source: new ol.source.ImageStatic(
+							{
+								url: service_wms + 'wms/vertical-section/path2/' + url + k,
+								projection: projection,
+								imageExtent: extent,
+								crossOrigin: null
+							})
+					}));
 				});
-				url += p;
+				
+
+
 				$('#coupe_trajet_to_window').off('click');
 				$('#coupe_trajet_to_window').on('click', function () {
-					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url=" + url + "&language=" + context.language);
+					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url_base=" + url + "&parametres=" + p + "&language=" + context.language);
 					$('#vue_trajet').modal('close');
-				});
-
-
-				var source = new ol.source.ImageStatic({
-					url: 'https://aviation.meteo.fr/wms/vertical-section/path/' + url,
-					projection: projection,
-					imageExtent: extent,
-					crossOrigin: null
 				});
 
 				var map = new ol.Map({
 					target: 'vue_trajet_ol',
 					controls: [],
-					layers: [
-						new ol.layer.Image({
-							source: source
-
-						})
-					],
+					layers: t_layer,
 					view: new ol.View({
 						projection: projection,
 						center: ol.extent.getCenter(extent),
@@ -202,23 +208,20 @@ function init_materialize() {
 						maxZoom: 8
 					})
 				});
-				source.on('imageloadstart', function () {
-
-
-					$('#wait_coupe_trajet').show();
-
-				});
-				source.on('imageloadend', function () {
+				map.on('rendercomplete', function (evt) {
 
 					$('#wait_coupe_trajet').hide();
-
 				});
-				source.on('imageloaderror', function () {
-
-					$('#wait_coupe_trajet').hide();
-
+				$.each(t_layer, function (k, v) {
+					console.log(v.getSource());
+					v.getSource().on('imageloadstart', function () {
+						$('#wait_coupe_trajet').show();
+					});
+					v.getSource().on('imageloaderror', function () {
+						$('#wait_coupe_trajet').hide();
+					});
 				});
-
+				
 			}
 		});
 
@@ -327,7 +330,7 @@ function init_materialize() {
 			context.change_delay_obs(+values[handle]);
 			if (slider_animate) slider_animate.change_delay(context.delay_obs);
 		});
-		
+
 
 		var slider = document.getElementById('speed_previ');
 
@@ -356,7 +359,7 @@ function init_materialize() {
 			if (slider_animate) slider_animate.change_delay(context.delay_previ);
 		});
 		apply_language();
-		
+
 	});
 
 
@@ -386,6 +389,7 @@ function check_localisation() {
 	}
 
 	else {
+
 		let href = new URL(location.href);
 		let search_params = new URLSearchParams(href.search);
 
@@ -393,7 +397,7 @@ function check_localisation() {
 			let origin = search_params.get('origin');
 
 			force_origin(origin);
-			
+
 
 		}
 
@@ -448,7 +452,7 @@ function get_vigilance(latitude, longitude, zoom) {
 }
 
 function init_localisation() {
-	
+
 
 
 	if (navigator && navigator.geolocation) {
@@ -491,370 +495,722 @@ function init_carto(id_div) {
 	extent = localisation.extent;
 	var h = $(document).height() - $("#header").height() - $("#footer").height();
 	mymap = new map_Controler(id_div, h, localisation.center.lon, localisation.center.lat, localisation.zoom_factor, extent, '');
+	let service_wms = 'http://int-aviation.meteo.fr/';
 
+	var layer_uv_height = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.uv_height',
+			params: { champ: 'model.uv_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1,
+			serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'uv_height',
+		libelle: $_layer_uv_10m,
+		menu_id: 'menu_vent',
+		zIndex: 1,
+		visible: true
+	};
+	var layer_ff_raf_height = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.ff_raf_height',
+			params: { champ: 'model.ff_raf_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'ff_raf_height',
+		libelle: $_layer_rafale,
+		menu_id: 'menu_vent',
+		zIndex: 2,
+		visible: false
+	};
+	var layer_uv_isobaric = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.uv_isobaric',
+			params: { champ: 'model.uv_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'uv_isobaric',
+		libelle: $_layer_uv_alt,
+		menu_id: 'menu_vent',
+		zIndex: 3,
+		visible: false,
+		elevationLevels: { 'min': 500, '10%': 550, '20%': 600, '30%': 650, '40%': 700, '50%': 750, '60%': 800, '70%': 850, '80%': 900, '90%': 925, 'max': 950 },
+		elevationUnit: 'hpa'
+	};
+	var layer_t_sol_arome = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.t_sol_arome',
+			params: { champ: 'model.t_sol_arome', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 't_sol_arome',
+		libelle: $_layer_t,
+		menu_id: 'menu_tempe',
+		zIndex: 4,
+		visible: false
 
+	};
+	var layer_td_height = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.td_height',
+			params: { champ: 'model.td_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'td',
+		libelle: $_layer_td,
+		menu_id: 'menu_tempe',
+		zIndex: 5,
+		visible: false
 
+	};
+	var layer_rrtt = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.rrtt',
+			params: { champ: 'model.rrtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'rrtt',
+		libelle: $_layer_rrtt,
+		menu_id: 'menu_precip',
+		zIndex: 7,
+		visible: false
+
+	};
+	var layer_ngtt = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.ngtt',
+			params: { champ: 'model.ngtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'ngtt',
+		libelle: $_layer_ngtt,
+		menu_id: 'menu_precip',
+		zIndex: 8,
+		visible: false
+
+	};
+	var layer_rflctvt_isobaric = {
+		source:
+		{
+			url: service_wms + 'wms/map/vertical_section.rflctvt_isobaric',
+			params: { champ: 'vertical_section.rflctvt_isobaric', ELEVATION: 925, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.5,
+		tag: "prevision",
+		id: 'vs_rflt_iso',
+		libelle: $_layer_vs_rflt_iso,
+		menu_id: 'menu_precip',
+		zIndex: 9,
+		visible: false,
+		elevationLevels: { 'min': 500, '11%': 550, '22%': 600, '33%': 650, '44%': 700, '55%': 750, '66%': 800, '77%': 850, '88%': 900, 'max': 925 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_visi_metropole = {
+		source:
+		{
+			url: service_wms + 'wms/map/gafor.visi_metropole',
+			params: { champ: 'gafor.visi_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'gafor_visi_metro',
+		libelle: $_layer_visi_metro,
+		menu_id: 'menu_aero',
+		zIndex: 10,
+		visible: false
+
+	};
+	var layer_plafond_metropole = {
+		source:
+		{
+			url: service_wms + 'wms/map/gafor.plafond_metropole',
+			params: { champ: 'gafor.plafond_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'gafor_plafond_metro',
+		libelle: $_layer_plafond_metro,
+		menu_id: 'menu_aero',
+		zIndex: 11,
+		visible: false
+
+	};
+	var layer_h_coulim = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.h_coulim',
+			params: { champ: 'model.h_coulim', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'h_coulim',
+		libelle: $_layer_hcl,
+		menu_id: 'menu_aero',
+		zIndex: 12,
+		visible: false
+
+	};
+	var layer_vv2_isobaric = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.vv2_isobaric',
+			params: { champ: 'model.vv2_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'vv2_isobaric',
+		libelle: $_layer_vv2,
+		menu_id: 'menu_aero',
+		zIndex: 13,
+		visible: false,
+		elevationLevels: { 'min': 300, '7%': 350, '14%': 400, '21%': 450, '28%': 500, '35%': 550, '42%': 600, '50%': 650, '57%': 700, '64%': 750, '71%': 800, '78%': 850, '85%': 900, '89%': 925, '92%': 950, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_hu_isobaric = {
+		source:
+		{
+			url: service_wms + 'wms/map/vertical_section.hu_isobaric',
+			params: { champ: 'vertical_section.hu_isobaric', ELEVATION: 1000, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'vs_hu_iso',
+		libelle: $_layer_hu,
+		menu_id: 'menu_nuage',
+		zIndex: 6,
+		visible: false,
+		elevationLevels: { 'min': 500, '9%': 550, '18%': 600, '27%': 650, '36%': 700, '45%': 750, '54%': 800, '63%': 850, '72%': 900, '81': 925, '90%': 950, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_sat_isp = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.sat_isp',
+			params: { champ: 'model.sat_isp', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'sat_isp',
+		libelle: $_layer_sat_isp,
+		menu_id: 'menu_nuage',
+		zIndex: 14,
+		visible: false
+
+	};
+	var layer_nebul_bas = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_bas',
+			params: { champ: 'model.nebul_bas', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_bas',
+		libelle: $_layer_nebul_bas,
+		menu_id: 'menu_nuage',
+		zIndex: 15,
+		visible: false
+
+	};
+	var layer_nebul_moyen = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_moyen',
+			params: { champ: 'model.nebul_moyen', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_moyen',
+		libelle: $_layer_nebul_moyen,
+		menu_id: 'menu_nuage',
+		zIndex: 16,
+		visible: false
+
+	};
+
+	var layer_nebul_haut = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_haut',
+			params: { champ: 'model.nebul_haut', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_haut',
+		libelle: $_layer_nebul_haut,
+		menu_id: 'menu_nuage',
+		zIndex: 17,
+		visible: false
+
+	};
+	var layer_t = {
+		source:
+		{
+			url: service_wms + 'wms/map/zt.t',
+			params: { champ: 'zt.t', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arpege',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 't_arpege',
+		libelle: $_t_layer_arpege,
+		menu_id: 'menu_analyse_generale',
+		zIndex: 18,
+		visible: false,
+		elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_z = {
+		source:
+		{
+			url: service_wms + 'wms/map/zt.z',
+			params: { champ: 'zt.z', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arpege',
+		opacity: 1,
+		tag: "prevision",
+		id: 'z_arpege',
+		libelle: $_z_layer_arpege,
+		menu_id: 'menu_analyse_generale',
+		zIndex: 19,
+		visible: false,
+		elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_ir_hrv = {
+		source:
+		{
+			url: service_wms + 'wms/map/satellite.ir_hrv',
+			params: { champ: 'satellite.ir_hrv', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		opacity: 0.6,
+		tag: "observation",
+		id: 'ir_hrv_fr',
+		libelle: $_layer_sat_ir_fr,
+		menu_id: 'menu_imagerie',
+		zIndex: 1,
+		visible: false
+
+	};
+	var layer_reflectivity_fm = {
+		source:
+		{
+			url: service_wms + 'wms/map/radar.reflectivity_fm',
+			params: { champ: 'radar.reflectivity_fm', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		opacity: 0.6,
+		tag: "observation",
+		id: 'radar_fr',
+		libelle: $_layer_radar_fr,
+		menu_id: 'menu_imagerie',
+		zIndex: 2,
+		visible: true
+
+	};
+	var layer_impact = {
+		source:
+		{
+			url: service_wms + 'wms/map/foudre.impact',
+			params: { champ: 'foudre.impact', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		opacity: 1,
+		tag: "observation",
+		id: 'foudre_fr',
+		libelle: $_layer_foudre_fr,
+		menu_id: 'menu_imagerie',
+		zIndex: 3,
+		visible: false
+
+	};
+	/************************************************************************ */
+
+	var layer_uv_height_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.uv_height_tro',
+			params: { champ: 'model.uv_height_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1,
+			serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'uv_height',
+		libelle: $_layer_uv_10m,
+		menu_id: 'menu_vent',
+		zIndex: 1,
+		visible: true
+	};
+	var layer_ff_raf_height_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.ff_raf_height_tro',
+			params: { champ: 'model.ff_raf_height_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'ff_raf_height',
+		libelle: $_layer_rafale,
+		menu_id: 'menu_vent',
+		zIndex: 2,
+		visible: false
+	};
+	var layer_uv_isobaric_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.uv_isobaric_tro',
+			params: { champ: 'model.uv_isobaric_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'uv_isobaric',
+		libelle: $_layer_uv_alt,
+		menu_id: 'menu_vent',
+		zIndex: 3,
+		visible: false,
+		elevationLevels: { 'min': 500, '10%': 550, '20%': 600, '30%': 650, '40%': 700, '50%': 750, '60%': 800, '70%': 850, '80%': 900, '90%': 925, 'max': 950 },
+		elevationUnit: 'hpa'
+	};
+	var layer_t_sol_arome_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.t_sol_arome_tro',
+			params: { champ: 'model.t_sol_arome_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 't_sol_arome',
+		libelle: $_layer_t,
+		menu_id: 'menu_tempe',
+		zIndex: 4,
+		visible: false
+
+	};
+	var layer_td_height_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.td_height_tro',
+			params: { champ: 'model.td_height_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'td',
+		libelle: $_layer_td,
+		menu_id: 'menu_tempe',
+		zIndex: 5,
+		visible: false
+
+	};
+	var layer_rrtt_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.rrtt_tro',
+			params: { champ: 'model.rrtt_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'rrtt',
+		libelle: $_layer_rrtt,
+		menu_id: 'menu_precip',
+		zIndex: 7,
+		visible: false
+
+	};
+
+	var layer_rflctvt_isobaric_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/vertical_section.rflctvt_isobaric_tro',
+			params: { champ: 'vertical_section.rflctvt_isobaric_tro', ELEVATION: 925, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.5,
+		tag: "prevision",
+		id: 'vs_rflt_iso',
+		libelle: $_layer_vs_rflt_iso,
+		menu_id: 'menu_precip',
+		zIndex: 9,
+		visible: false,
+		elevationLevels: { 'min': 500, '11%': 550, '22%': 600, '33%': 650, '44%': 700, '55%': 750, '66%': 800, '77%': 850, '88%': 900, 'max': 925 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_visi_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/gafor.visi_tro',
+			params: { champ: 'gafor.visi_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'gafor_visi_metro',
+		libelle: $_layer_visi_metro,
+		menu_id: 'menu_aero',
+		zIndex: 10,
+		visible: false
+
+	};
+	var layer_plafond_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/gafor.plafond_tro',
+			params: { champ: 'gafor.plafond_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'gafor_plafond_metro',
+		libelle: $_layer_plafond_metro,
+		menu_id: 'menu_aero',
+		zIndex: 11,
+		visible: false
+
+	};
+	var layer_h_coulim_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.h_coulim_tro',
+			params: { champ: 'model.h_coulim_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'h_coulim',
+		libelle: $_layer_hcl,
+		menu_id: 'menu_aero',
+		zIndex: 12,
+		visible: false
+
+	};
+	var layer_vv2_isobaric_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.vv2_isobaric_tro',
+			params: { champ: 'model.vv2_isobaric_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 1,
+		tag: "prevision",
+		id: 'vv2_isobaric',
+		libelle: $_layer_vv2,
+		menu_id: 'menu_aero',
+		zIndex: 13,
+		visible: false,
+		elevationLevels: { 'min': 300, '7%': 350, '14%': 400, '21%': 450, '28%': 500, '35%': 550, '42%': 600, '50%': 650, '57%': 700, '64%': 750, '71%': 800, '78%': 850, '85%': 900, '89%': 925, '92%': 950, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_hu_isobaric_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/vertical_section.hu_isobaric_tro',
+			params: { champ: 'vertical_section.hu_isobaric_tro', ELEVATION: 1000, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'vs_hu_iso',
+		libelle: $_layer_hu,
+		menu_id: 'menu_nuage',
+		zIndex: 6,
+		visible: false,
+		elevationLevels: { 'min': 500, '9%': 550, '18%': 600, '27%': 650, '36%': 700, '45%': 750, '54%': 800, '63%': 850, '72%': 900, '81': 925, '90%': 950, 'max': 1000 },
+		elevationUnit: 'hpa'
+
+	};
+	var layer_nebul_bas_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_bas_tro',
+			params: { champ: 'model.nebul_bas_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_bas',
+		libelle: $_layer_nebul_bas,
+		menu_id: 'menu_nuage',
+		zIndex: 15,
+		visible: false
+
+	};
+	var layer_nebul_moyen_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_moyen_tro',
+			params: { champ: 'model.nebul_moyen_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_moyen',
+		libelle: $_layer_nebul_moyen,
+		menu_id: 'menu_nuage',
+		zIndex: 16,
+		visible: false
+
+	};
+
+	var layer_nebul_haut_tro = {
+		source:
+		{
+			url: service_wms + 'wms/map/model.nebul_haut_tro',
+			params: { champ: 'model.nebul_haut_tro', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		modele: 'arome',
+		opacity: 0.6,
+		tag: "prevision",
+		id: 'nebul_haut',
+		libelle: $_layer_nebul_haut,
+		menu_id: 'menu_nuage',
+		zIndex: 17,
+		visible: false
+
+	};
+	var layer_impact_world = {
+		source:
+		{
+			url: service_wms + 'wms/map/foudre.impact_world',
+			params: { champ: 'foudre.impact_world', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+			ratio: 1, serverType: 'geoserver'
+		},
+		opacity: 1,
+		tag: "observation",
+		id: 'foudre_fr',
+		libelle: $_layer_foudre_fr,
+		menu_id: 'menu_imagerie',
+		zIndex: 3,
+		visible: false
+
+	};
 	var t_layer = {
 		fr: [
+			layer_uv_height,
+			layer_ff_raf_height,
+			layer_uv_isobaric,
+			layer_t_sol_arome,
+			layer_td_height,
+			layer_rrtt,
+			layer_ngtt,
+			layer_rflctvt_isobaric,
+			layer_visi_metropole,
+			layer_plafond_metropole,
+			layer_h_coulim,
+			layer_vv2_isobaric,
+			layer_hu_isobaric,
+			layer_sat_isp,
+			layer_nebul_bas,
+			layer_nebul_moyen,
+			layer_nebul_haut,
+			layer_t,
+			layer_z,
+			layer_ir_hrv,
+			layer_reflectivity_fm,
+			layer_impact
 
+		]
+		,
+		ma: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
 			{
 				source:
 				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.uv_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1,
-					serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 1,
-				tag: "prevision",
-				id: 'uv_height',
-				libelle: $_layer_uv_10m,
-				menu_id: 'menu_vent',
-				zIndex: 1,
-				visible: true
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.ff_raf_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'ff_raf_height',
-				libelle: $_layer_rafale,
-				menu_id: 'menu_vent',
-				zIndex: 2,
-				visible: false
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.uv_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 1,
-				tag: "prevision",
-				id: 'uv_isobaric',
-				libelle: $_layer_uv_alt,
-				menu_id: 'menu_vent',
-				zIndex: 3,
-				visible: false,
-				elevationLevels: { 'min': 500, '10%': 550, '20%': 600, '30%': 650, '40%': 700, '50%': 750, '60%': 800, '70%': 850, '80%': 900, '90%': 925, 'max': 950 },
-				elevationUnit: 'hpa'
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.t_sol_arome', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 't_sol_arome',
-				libelle: $_layer_t,
-				menu_id: 'menu_tempe',
-				zIndex: 4,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.td_height', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'td',
-				libelle: $_layer_td,
-				menu_id: 'menu_tempe',
-				zIndex: 5,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.rrtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'rrtt',
-				libelle: $_layer_rrtt,
-				menu_id: 'menu_precip',
-				zIndex: 7,
-				visible: false
-
-			},
-
-
-
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.ngtt', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'ngtt',
-				libelle: $_layer_ngtt,
-				menu_id: 'menu_precip',
-				zIndex: 8,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/wms/map/vertical_section.rflctvt_isobaric',
-					params: { champ: 'vertical_section.rflctvt_isobaric', ELEVATION: 925, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.5,
-				tag: "prevision",
-				id: 'vs_rflt_iso',
-				libelle: $_layer_vs_rflt_iso,
-				menu_id: 'menu_precip',
-				zIndex: 9,
-				visible: false,
-				elevationLevels: { 'min': 500, '11%': 550, '22%': 600, '33%': 650, '44%': 700, '55%': 750, '66%': 800, '77%': 850, '88%': 900, 'max': 925 },
-				elevationUnit: 'hpa'
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'gafor.visi_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'gafor_visi_metro',
-				libelle: $_layer_visi_metro,
-				menu_id: 'menu_aero',
-				zIndex: 10,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'gafor.plafond_metropole', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'gafor_plafond_metro',
-				libelle: $_layer_plafond_metro,
-				menu_id: 'menu_aero',
-				zIndex: 11,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.h_coulim', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 1,
-				tag: "prevision",
-				id: 'h_coulim',
-				libelle: $_layer_hcl,
-				menu_id: 'menu_aero',
-				zIndex: 12,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.vv2_isobaric', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 700, RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 1,
-				tag: "prevision",
-				id: 'vv2_isobaric',
-				libelle: $_layer_vv2,
-				menu_id: 'menu_aero',
-				zIndex: 13,
-				visible: false,
-				elevationLevels: { 'min': 300, '7%': 350, '14%': 400, '21%': 450, '28%': 500, '35%': 550, '42%': 600, '50%': 650, '57%': 700, '64%': 750, '71%': 800, '78%': 850, '85%': 900, '89%': 925, '92%': 950, 'max': 1000 },
-				elevationUnit: 'hpa'
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/wms/map/vertical_section.hu_isobaric',
-					params: { champ: 'vertical_section.hu_isobaric', ELEVATION: 1000, TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'vs_hu_iso',
-				libelle: $_layer_hu,
-				menu_id: 'menu_nuage',
-				zIndex: 6,
-				visible: false,
-				elevationLevels: { 'min': 500, '9%': 550, '18%': 600, '27%': 650, '36%': 700, '45%': 750, '54%': 800, '63%': 850, '72%': 900, '81': 925, '90%': 950, 'max': 1000 },
-				elevationUnit: 'hpa'
-
-			}
-			,
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.sat_isp', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'sat_isp',
-				libelle: $_layer_sat_isp,
-				menu_id: 'menu_nuage',
-				zIndex: 14,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.nebul_bas', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'nebul_bas',
-				libelle: $_layer_nebul_bas,
-				menu_id: 'menu_nuage',
-				zIndex: 15,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.nebul_moyen', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'nebul_moyen',
-				libelle: $_layer_nebul_moyen,
-				menu_id: 'menu_nuage',
-				zIndex: 16,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'model.nebul_haut', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), RUN: context.date_run_arome.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arome',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 'nebul_haut',
-				libelle: $_layer_nebul_haut,
-				menu_id: 'menu_nuage',
-				zIndex: 17,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'zt.t', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arpege',
-				opacity: 0.6,
-				tag: "prevision",
-				id: 't_arpege',
-				libelle: $_t_layer_arpege,
-				menu_id: 'menu_analyse_generale',
-				zIndex: 18,
-				visible: false,
-				elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
-				elevationUnit: 'hpa'
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'zt.z', TIME: context.date_reference.toISOString().replace('.000Z', 'Z'), ELEVATION: 500, RUN: context.date_run_arpege.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				modele: 'arpege',
-				opacity: 1,
-				tag: "prevision",
-				id: 'z_arpege',
-				libelle: $_z_layer_arpege,
-				menu_id: 'menu_analyse_generale',
-				zIndex: 19,
-				visible: false,
-				elevationLevels: { 'min': 500, '33%': 700, '66%': 850, 'max': 1000 },
-				elevationUnit: 'hpa'
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'satellite.ir_hrv', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
-					ratio: 1, serverType: 'geoserver'
-				},
-				opacity: 0.6,
-				tag: "observation",
-				id: 'ir_hrv_fr',
-				libelle: $_layer_sat_ir_fr,
-				menu_id: 'menu_imagerie',
-				zIndex: 1,
-				visible: false
-
-			},
-			{
-				source:
-				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'radar.reflectivity_fm', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					url: service_wms + 'wms/map/radar.reflectivity_ag',
+					params: { champ: 'radar.reflectivity_ag', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
 				opacity: 0.6,
@@ -865,50 +1221,213 @@ function init_carto(id_div) {
 				zIndex: 2,
 				visible: true
 
-			},
+			}
+		],
+		ga: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
 			{
 				source:
 				{
-					url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-					params: { champ: 'foudre.impact', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					url: service_wms + 'wms/map/radar.reflectivity_ag',
+					params: { champ: 'radar.reflectivity_ag', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
 					ratio: 1, serverType: 'geoserver'
 				},
-				opacity: 1,
+				opacity: 0.6,
 				tag: "observation",
-				id: 'foudre_fr',
-				libelle: $_layer_foudre_fr,
+				id: 'radar_fr',
+				libelle: $_layer_radar_fr,
 				menu_id: 'menu_imagerie',
-				zIndex: 3,
-				visible: false
+				zIndex: 2,
+				visible: true
+
+			}],
+		gy: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
+			{
+				source:
+				{
+					url: service_wms + 'wms/map/radar.reflectivity_ag',
+					params: { champ: 'radar.reflectivity_ag', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				opacity: 0.6,
+				tag: "observation",
+				id: 'radar_fr',
+				libelle: $_layer_radar_fr,
+				menu_id: 'menu_imagerie',
+				zIndex: 2,
+				visible: true
+
+			}],
+		re: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
+			{
+				source:
+				{
+					url: service_wms + 'wms/map/radar.reflectivity_re',
+					params: { champ: 'radar.reflectivity_re', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				opacity: 0.6,
+				tag: "observation",
+				id: 'radar_fr',
+				libelle: $_layer_radar_fr,
+				menu_id: 'menu_imagerie',
+				zIndex: 2,
+				visible: true
+
+			}],
+		my: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world
+		],
+		nc: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
+
+			{
+				source:
+				{
+					url: service_wms + 'wms/map/radar.reflectivity_nc',
+					params: { champ: 'radar.reflectivity_nc', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				opacity: 0.6,
+				tag: "observation",
+				id: 'radar_fr',
+				libelle: $_layer_radar_fr,
+				menu_id: 'menu_imagerie',
+				zIndex: 2,
+				visible: true
+
+			}],
+		po: [
+			layer_uv_height_tro,
+			layer_ff_raf_height_tro,
+			layer_uv_isobaric_tro,
+			layer_t_sol_arome_tro,
+			layer_td_height_tro,
+			layer_rrtt_tro,
+			layer_rflctvt_isobaric_tro,
+			layer_visi_tro,
+			layer_plafond_tro,
+			layer_h_coulim_tro,
+			layer_vv2_isobaric_tro,
+			layer_hu_isobaric_tro,
+			layer_nebul_bas_tro,
+			layer_nebul_moyen_tro,
+			layer_nebul_haut_tro,
+			layer_t,
+			layer_z,
+			layer_impact_world,
+			{
+
+				source:
+				{
+					url: service_wms + 'wms/map/satellite.ir_polynesie_goes17',
+					params: { champ: 'satellite.ir_polynesie_goes17', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
+					ratio: 1, serverType: 'geoserver'
+				},
+				opacity: 0.8,
+				tag: "observation",
+				id: 'ir_polynesie',
+				libelle: $_title_imgobs_polynesie,
+				menu_id: 'menu_imagerie',
+				zIndex: 1,
+				visible: true
 
 			}
 
-		]
-		,
-		ma: [],
-		ga: [],
-		gy: [],
-		re: [],
-		my: [],
-		nc: [],
-		po: [{
-			source:
-			{
-				url: 'http://int-aviation.meteo.fr/aeroweb_maille_fine_carto.php',
-				params: { champ: 'satellite.ir_polynesie_goes17', TIME: context.date_reference.toISOString().replace('.000Z', 'Z') },
-				ratio: 1, serverType: 'geoserver'
-			},
-			opacity: 0.8,
-			tag: "observation",
-			id: 'ir_polynesie',
-			libelle: $_title_imgobs_polynesie,
-			menu_id: 'menu_imagerie',
-			zIndex: 1,
-			visible: true
-
-		}
 		],
-		sp: [],
+		sp: [
+
+			layer_t,
+			layer_z,
+			layer_impact_world
+		],
 
 
 	};
@@ -969,8 +1488,8 @@ function init_carto(id_div) {
 
 
 		$('#' + layer.menu_id).append(p);
-		$('select').formSelect({classes: 'leftplus', dropdownOptions: {coverTrigger: false}});
-      
+		$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
+
 		var slider = document.getElementById('opacity_' + layer.id);
 
 		noUiSlider.create(slider, {
@@ -1343,11 +1862,49 @@ function apply_language() {
 	$('#menu2 div:eq( 0 ) label').text($_liste_trajets_enregistres);
 	$('#menu1 div:eq( 0 ) label').text($_liste_terrains_enregistres);
 	$('#menu1_content').html($_coupe_terrain_vide);
+
+	$("#menu3 > div:eq( 0 ) > label").text($_choix_date_arome);
+	$("#menu3 > div:eq( 1 ) > label").text($_choix_date_arpege);
+
 	maj_liste_trajet_enregistre();
 	maj_liste_terrain_enregistre();
 
 	$('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 
+
+	//mise a jour des contenu menu3 et menu4 prevision et observation
+	//en fonction des elements presents dans le menu
+	//menu3 prevision
+	let show_slider_vitesse_anim = false;
+	for (let i = 0; i < 2; i++) {
+		let t = $("#menu3 > ul:eq( " + i + " ) > li");
+		let show_slider_date_run = false;
+		$.each(t, function (k, v) {
+			if (v.children[1].childElementCount == 0) $(v).hide();
+			else { show_slider_date_run = true; show_slider_vitesse_anim = true; }
+		});
+
+		if (show_slider_date_run == false) {
+			$("#menu3 > div:eq( " + i + " )").hide();
+			$("#menu3 > hr:eq( " + i + " )").hide();
+		}
+	}
+	if (show_slider_vitesse_anim == false) $("#menu3 > div:eq( " + 2 + " )").hide();
+
+	//menu4 observation
+	show_slider_vitesse_anim = false;
+	t = $("#menu4 > ul:eq( " + 0 + " ) > li");
+
+	$.each(t, function (k, v) {
+		if (v.children[1].childElementCount == 0) $(v).hide();
+		else { show_slider_vitesse_anim = true; }
+	});
+
+	if (show_slider_vitesse_anim == false) {
+		$("#menu4 > div:eq( " + 0 + " )").hide();
+		$("#menu4> hr:eq( " + 0 + " )").hide();
+
+	}
 
 
 
@@ -1513,14 +2070,14 @@ function load_controller() {
 	//context.mode='prevision';
 	choix_mode(context.mode);
 	$('#menu5').sidenav('close');
-	
+
 
 }
 
 
 
 function open_vertical_profil(coord) {
-	
+
 	var obj = {};
 	let p = ol.proj.toLonLat(coord, 'EPSG:3857');
 	obj.lon = p[0];
@@ -1576,7 +2133,7 @@ function open_track_profil(coord) {
 
 		coupe_trajet_en_cours.update(t);
 	}
-	
+
 	//maj_liste_trajet_enregistre($('#menu2 div:eq( 0 ) select').val());
 	$('#menu2').sidenav('open');
 
@@ -1632,7 +2189,7 @@ function Valider_terrain_oaci() {
 
 	let erreur = false;
 	var feature = mymap.sourcePoint.getFeatures()[0];
-	
+
 	let key = $('#terrain').val().toUpperCase();
 	let search = null;
 	$.each(coupe_terrain_en_cours.list, function (i, v) {

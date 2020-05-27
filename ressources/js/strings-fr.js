@@ -157,6 +157,11 @@ $_speed_animation_obs = "Vitesse d'animation observations";
 
 $_speed_animation_previ = "Vitesse d'animation prévisions";
 $_seconde ="seconde(s)";
+
+
+$_choix_date_arome = "Choix de la date du modèle maille fine";
+$_choix_date_arpege = "Choix de la date du modèle étendu";
+
 $_title_hires = '<b>Prévisions modèle maille fine </b>';
 $_title_hires_notice = '(notice sur les champs)';
 $_title_polynesie_notice = 'Légende';

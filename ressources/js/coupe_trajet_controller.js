@@ -16,7 +16,7 @@ class coupe_trajet_Controller {
             me.list.push([v])
         });
 
-        this.parametres = { hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, iso_hcl: false, uv_alt: true };
+        this.parametres = {axes: true, relief: true, hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, hcl: false, uv_alt: true };
         this.duree = 1000 * 60 * 60;
         this.fl = '100';
         this.depart = null;
@@ -212,7 +212,7 @@ class coupe_trajet_Controller {
             html += "<div class='row ' style='margin-left:0.25rem;margin-right:0.25rem;'>";
 
             html += "<div class='input-field col s12'>";
-            html += "<select id='choix_layer_trajet' multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;\">";
+            html += "<select id='choix_layer_trajet' multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;coupe_trajet_en_cours.parametres['axes']=true;coupe_trajet_en_cours.parametres['relief']=true;\">";
             html += "<option value='hu' ";
             this.parametres.hu == true ? html += 'selected' : html += '';
             html += ">" + $_hu + "</option>";
@@ -237,8 +237,8 @@ class coupe_trajet_Controller {
             html += "<option value='tke'";
             this.parametres.tke == true ? html += 'selected' : html += '';
             html += ">" + $_tke + "</option>";
-            html += "<option value='iso_hcl'";
-            this.parametres.iso_hcl == true ? html += 'selected' : html += '';
+            html += "<option value='hcl'";
+            this.parametres.hcl == true ? html += 'selected' : html += '';
             html += ">" + $_hcl + "</option>";
             html += "<option value='uv_alt' ";
             this.parametres.uv_alt == true ? html += 'selected disabled' : html += 'disabled';
