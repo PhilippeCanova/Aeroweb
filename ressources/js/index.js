@@ -172,7 +172,10 @@ function init_materialize() {
 				let service_wms = 'https://int-aviation.meteo.fr/'
 				let p = '';
 				let t_layer = [];
-
+				let route;
+				if (localisation.origin=='fr') route = 'wms/vertical-section/path2/';
+				else route = 'wms/vertical-section/path2_tro/';
+				
 
 				$.each(coupe_trajet_en_cours.parametres, function (k, v) {
 					if (p != '' && v) p += "," + k;
@@ -181,7 +184,7 @@ function init_materialize() {
 					if (v) t_layer.push(new ol.layer.Image({
 						source: new ol.source.ImageStatic(
 							{
-								url: service_wms + 'wms/vertical-section/path2/' + url + k,
+								url: service_wms + route + url + k,
 								projection: projection,
 								imageExtent: extent,
 								crossOrigin: null
@@ -193,7 +196,7 @@ function init_materialize() {
 
 				$('#coupe_trajet_to_window').off('click');
 				$('#coupe_trajet_to_window').on('click', function () {
-					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url_base=" + url + "&parametres=" + p + "&language=" + context.language);
+					newwindow("coupe_trajet.html?name=" + coupe_trajet_en_cours.name + "&url_base=" + url + "&parametres=" + p + "&language=" + context.language + "&origin="+localisation.origin);
 					$('#vue_trajet').modal('close');
 				});
 
@@ -243,40 +246,49 @@ function init_materialize() {
 
 				$('#title_coupe_terrain').html($_coupe_terrain + " " + coupe_terrain_en_cours.name);
 
-				//var url = 'https://aviation.meteo.fr/wms/vertical-section/terrain/';
+			
 				var url = '';
 				url += coupe_terrain_en_cours.terrain.lat + "/" + coupe_terrain_en_cours.terrain.lon + "/";
 				url += coupe_terrain_en_cours.depart / 1000 + '/' + coupe_terrain_en_cours.duree / (1000 * 60 * 60) + '/';
 				url += coupe_terrain_en_cours.fl + '/';
+				
+				
+				let service_wms = 'https://int-aviation.meteo.fr/'
 				let p = '';
+				let t_layer = [];
+				let route;
+				if (localisation.origin=='fr') route = 'wms/vertical-section/terrain2/';
+				else route = 'wms/vertical-section/terrain2_tro/';
+				
 				$.each(coupe_terrain_en_cours.parametres, function (k, v) {
 					if (p != '' && v) p += "," + k;
 					else if (p == '' && v) p += k;
+
+					if (v) t_layer.push(new ol.layer.Image({
+						source: new ol.source.ImageStatic(
+							{
+								url: service_wms + route + url + k,
+								projection: projection,
+								imageExtent: extent,
+								crossOrigin: null
+							})
+					}));
 				});
-				url += p;
+				
+
+
 				$('#coupe_terrain_to_window').off('click');
 				$('#coupe_terrain_to_window').on('click', function () {
-					newwindow("coupe_terrain.html?name=" + coupe_terrain_en_cours.name + "&url=" + url + "&language=" + context.language);
+					newwindow("coupe_terrain.html?name=" + coupe_terrain_en_cours.name + "&url_base=" + url +"&parametres="+ p + "&language=" + context.language+ "&origin="+ localisation.origin);
 					$('#vue_terrain').modal('close');
 				});
 
 
-				var source = new ol.source.ImageStatic({
-					url: 'https://aviation.meteo.fr/wms/vertical-section/terrain/' + url,
-					projection: projection,
-					imageExtent: extent,
-					crossOrigin: null
-				});
 
 				var map = new ol.Map({
 					target: 'vue_terrain_ol',
 					controls: [],
-					layers: [
-						new ol.layer.Image({
-							source: source
-
-						})
-					],
+					layers: t_layer,
 					view: new ol.View({
 						projection: projection,
 						center: ol.extent.getCenter(extent),
@@ -284,24 +296,20 @@ function init_materialize() {
 						maxZoom: 8
 					})
 				});
-				source.on('imageloadstart', function () {
 
-
-					$('#wait_coupe_terrain').show();
-
-				});
-				source.on('imageloadend', function () {
+				map.on('rendercomplete', function (evt) {
 
 					$('#wait_coupe_terrain').hide();
-
 				});
-				source.on('imageloaderror', function () {
-
-					$('#wait_coupe_terrain').hide();
-
+				$.each(t_layer, function (k, v) {
+					console.log(v.getSource());
+					v.getSource().on('imageloadstart', function () {
+						$('#wait_coupe_terrain').show();
+					});
+					v.getSource().on('imageloaderror', function () {
+						$('#wait_coupe_terrain').hide();
+					});
 				});
-
-
 
 
 			}
@@ -2264,3 +2272,5 @@ function newwindow(url, name) {
 	window.open(url, name, 'top=0,left=0,width=1024,height=768,menubar=no,status=no,scrollbars=yes');
 
 }
+
+

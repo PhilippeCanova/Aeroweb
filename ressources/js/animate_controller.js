@@ -112,9 +112,11 @@ class animate_Controller {
 	}
 	next() {
 
+		
 		if (this.map_controller.mymap.etat == '1') {
-			var v = this.getvalue(1);
 			
+			var v = this.getvalue(1);
+			console.log(v);
 			v = +v + this.step;
 			if (v > this.getvalue(2)) v = this.getvalue(0);
 			this.setvalue(v);

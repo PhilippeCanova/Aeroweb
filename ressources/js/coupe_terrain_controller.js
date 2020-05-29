@@ -8,7 +8,11 @@ class coupe_terrain_Controller {
         this.list = [terrain];
         this.date = Date.now();
 
-        this.parametres = { t: true, hu: true, rflctvt: false, uv_alt: true };
+        // this.parametres = { axes: true, relief: true, t: true, hu: true, rflctvt: false, uv_alt: true };
+        this.parametres = { axes: true, relief: true, t: true, hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, hcl: false, uv_alt: true };
+
+
+
         this.duree = 1000 * 60 * 60 * 6;
         this.fl = '100';
         this.depart = null;
@@ -23,13 +27,13 @@ class coupe_terrain_Controller {
 
     }
     load_from_storage(index) {
-        if (localStorage.getItem('liste_coupe_terrain_'+localisation.origin) == null) {
+        if (localStorage.getItem('liste_coupe_terrain_' + localisation.origin) == null) {
 
             return;
         }
         else {
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_'+localisation.origin))[index];
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_' + localisation.origin))[index];
 
             this.name = t.name;
             this.terrain = t.terrain;
@@ -48,7 +52,7 @@ class coupe_terrain_Controller {
 
         this.name = name;
         this.date = Date.now();
-        if (localStorage.getItem('liste_coupe_terrain_'+localisation.origin) == null) {
+        if (localStorage.getItem('liste_coupe_terrain_' + localisation.origin) == null) {
 
             var t = [this];
 
@@ -57,7 +61,7 @@ class coupe_terrain_Controller {
 
 
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_'+localisation.origin));
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_terrain_' + localisation.origin));
 
 
 
@@ -93,14 +97,14 @@ class coupe_terrain_Controller {
 
 
 
-        localStorage.setItem('liste_coupe_terrain_'+localisation.origin, JSON.stringify(t))
+        localStorage.setItem('liste_coupe_terrain_' + localisation.origin, JSON.stringify(t))
 
     }
 
     render() {
 
-       
-        var html='';
+
+        var html = '';
         var me = this;
         html += "<div class='row ' >";
 
@@ -122,19 +126,58 @@ class coupe_terrain_Controller {
         html += "<div class='row ' style='margin-left:0.25rem;margin-right:0.25rem;'>";
 
         html += "<div class='input-field col s12'>";
-        html += "<select multiple onchange=\"$.each(coupe_terrain_en_cours.parametres,function(k,v){coupe_terrain_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_terrain_en_cours.parametres[v]=true;});coupe_terrain_en_cours.parametres['uv_alt']=true;\">";
-        html += "<option value='t' ";
-        this.parametres.t == true ? html += 'selected' : html += '';
-        html += ">" + $_t + "</option>";
+        html += "<select multiple onchange=\"$.each(coupe_terrain_en_cours.parametres,function(k,v){coupe_terrain_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_terrain_en_cours.parametres[v]=true;});coupe_terrain_en_cours.parametres['uv_alt']=true;coupe_terrain_en_cours.parametres['axes']=true;coupe_terrain_en_cours.parametres['relief']=true;\">";
+
+        if (localisation.origin == 'fr') {
+            html += "<option value='t' ";
+            this.parametres.t == true ? html += 'selected' : html += '';
+            html += ">" + $_t + "</option>";
+        }
+
         html += "<option value='hu' ";
         this.parametres.hu == true ? html += 'selected' : html += '';
         html += ">" + $_hu + "</option>";
+
         html += "<option value='rflctvt'";
         this.parametres.rflctvt == true ? html += 'selected' : html += '';
         html += ">" + $_rflctvt + "</option>";
+
+       
+
+        html += "<option value='vv2'";
+        this.parametres.vv2 == true ? html += 'selected' : html += '';
+        html += ">" + $_vv2 + "</option>";
+
+        html += "<option value='iso_m10'";
+        this.parametres.iso_m10 == true ? html += 'selected' : html += '';
+        html += ">" + $_iso_m10 + "</option>";
+
+        html += "<option value='iso_0'";
+        this.parametres.iso_0 == true ? html += 'selected' : html += '';
+        html += ">" + $_iso_0 + "</option>";
+
+        if (localisation.origin == 'fr') {
+            html += "<option value='iso_p5'";
+            this.parametres.iso_p5 == true ? html += 'selected' : html += '';
+            html += ">" + $_iso_p5 + "</option>";
+
+            html += "<option value='theta'";
+            this.parametres.theta == true ? html += 'selected' : html += '';
+            html += ">" + $_theta + "</option>";
+        }
+        html += "<option value='tke'";
+        this.parametres.tke == true ? html += 'selected' : html += '';
+        html += ">" + $_tke + "</option>";
+
+        html += "<option value='hcl'";
+        this.parametres.hcl == true ? html += 'selected' : html += '';
+        html += ">" + $_hcl + "</option>";
+
         html += "<option value='uv_alt' ";
         this.parametres.uv_alt == true ? html += 'selected disabled' : html += 'disabled';
         html += ">" + $_uv_alt + "</option>";
+
+
         html += "</select>";
 
         html += "<label>" + $_choix_parametre_terrain + "</label>";
@@ -183,15 +226,15 @@ class coupe_terrain_Controller {
         html += "</div>";
 
         html += "</div>";
-        
+
         $('#' + this.id_cible).html(html)
 
 
 
 
 
-        $('select').formSelect({classes: 'leftplus', dropdownOptions: {coverTrigger: false}});
-        
+        $('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
+
         M.updateTextFields();
 
         var dateSlider = document.getElementById('slider_echeance_terrain');
@@ -225,8 +268,8 @@ class coupe_terrain_Controller {
 
         console.log(this);
 
-        let data = {icao:me.terrain.icao,lon:me.terrain.lon,lat:me.terrain.lat,coord:'coord'};
-        
+        let data = { icao: me.terrain.icao, lon: me.terrain.lon, lat: me.terrain.lat, coord: 'coord' };
+
         $('#terrain').autocomplete({
             data: data,
             minLength: 1

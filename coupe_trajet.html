@@ -27,7 +27,21 @@
             else Title += "?????";
             $('#title_coupe_trajet').html(Title);
             let service_wms = 'https://int-aviation.meteo.fr/'
-            var url_base = service_wms + 'wms/vertical-section/path2/';
+
+            let origin;
+            let route;
+            if (search_params.has('origin')) origin = search_params.get('origin');
+            else return false;
+            if (origin == 'fr') {
+                route = 'wms/vertical-section/path2/';
+            }
+            else {
+
+                route = 'wms/vertical-section/path2_tro/';
+            }
+
+
+            var url_base = service_wms + route;
             if (search_params.has('url_base')) url_base += search_params.get('url_base');
             else return false;
 
@@ -59,23 +73,11 @@
 
             })
 
-            /*
-                        var source = new ol.source.ImageStatic({
-                            url: url,
-                            projection: projection,
-                            imageExtent: extent,
-                            crossOrigin: null
-                        });
-            */
+           
             var map = new ol.Map({
                 target: 'vue_trajet_ol',
                 controls: [],
-                /* layers: [
-                     new ol.layer.Image({
-                         source: source
- 
-                     })
-                 ],*/
+               
                 layers: t_layer,
                 view: new ol.View({
                     projection: projection,
@@ -103,23 +105,7 @@
                 });
             });
 
-/*
-            source.on('imageloadstart', function () {
 
-
-                $('.preloader-wrapper').show();
-
-            });
-            source.on('imageloadend', function () {
-
-                $('.preloader-wrapper').hide();
-
-            });
-            source.on('imageloaderror', function () {
-
-                $('.preloader-wrapper').hide();
-
-            });*/
         }
     </script>
 </head>
