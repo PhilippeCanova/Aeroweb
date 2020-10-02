@@ -151,3 +151,16 @@ border-radius: 3px;
 .sidenav .collapsible-body {
 	background-color: transparent !important;
 }
+.noUi-handle-upper {
+	width: 14px !important;
+}
+.noUi-handle-upper::after, .noUi-handle-upper::before {
+	width: 0px !important;
+}
+.noUi-handle-lower {
+	width: 14px !important;
+	left:10px;	
+}
+.noUi-handle-lower::after, .noUi-handle-lower::before {
+	width: 0px !important;
+}
