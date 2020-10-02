@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import Google Icon Font
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
     <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="ol/ol.css" />
     <link type="text/css" rel="stylesheet" href="ressources/css/index.css" />
@@ -19,17 +19,33 @@
             let href = new URL(location.href);
             let search_params = new URLSearchParams(href.search);
 
-            if (search_params.has('language')) $.localise('ressources/js/strings', { language: search_params.get('language')});
-            else $.localise('ressources/js/strings', { language: 'fr'});
+            if (search_params.has('language')) $.localise('ressources/js/strings', { language: search_params.get('language') });
+            else $.localise('ressources/js/strings', { language: 'fr' });
 
-            let Title = $_coupe_trajet+ " ";
-            if (search_params.has('name')) Title+=search_params.get('name');
-            else Title+="?????";
+            let Title = $_coupe_trajet + " ";
+            if (search_params.has('name')) Title += search_params.get('name');
+            else Title += "?????";
             $('#title_coupe_trajet').html(Title);
+            let service_wms = 'https://int-aviation.meteo.fr/'
 
-            var url = 'https://aviation.meteo.fr/wms/vertical-section/path/';
-            if (search_params.has('url')) url+=search_params.get('url');
+            let origin;
+            let route;
+            if (search_params.has('origin')) origin = search_params.get('origin');
             else return false;
+            if (origin == 'fr') {
+                route = 'wms/vertical-section/path2/';
+            }
+            else {
+
+                route = 'wms/vertical-section/path2_tro/';
+            }
+
+
+            var url_base = service_wms + route;
+            if (search_params.has('url_base')) url_base += search_params.get('url_base');
+            else return false;
+
+
 
 
             $('.preloader-wrapper').show();
@@ -40,24 +56,29 @@
                 extent: extent
             });
 
+            let t_layer = [];
+            let parametres;
+            if (search_params.has('parametres')) parametres = search_params.get('parametres').split(',');
+            else return false;
 
+            $.each(parametres, function (k, v) {
+                t_layer.push(new ol.layer.Image({
+                    source: new ol.source.ImageStatic({
+                        url: url_base + v,
+                        projection: projection,
+                        imageExtent: extent,
+                        crossOrigin: null
+                    })
+                }));
 
-            var source = new ol.source.ImageStatic({
-                url: url,
-                projection: projection,
-                imageExtent: extent,
-                crossOrigin: null
-            });
+            })
 
+           
             var map = new ol.Map({
                 target: 'vue_trajet_ol',
                 controls: [],
-                layers: [
-                    new ol.layer.Image({
-                        source: source
-
-                    })
-                ],
+               
+                layers: t_layer,
                 view: new ol.View({
                     projection: projection,
                     center: ol.extent.getCenter(extent),
@@ -65,22 +86,26 @@
                     maxZoom: 8
                 })
             });
-            source.on('imageloadstart', function() {
 
-
-                $('.preloader-wrapper').show();
-
-            });
-            source.on('imageloadend', function() {
-
+            map.on('rendercomplete', function (evt) {
+                
+                
                 $('.preloader-wrapper').hide();
-
             });
-            source.on('imageloaderror', function() {
-
-                $('.preloader-wrapper').hide();
-
+            $.each(t_layer, function (k, v) {
+                console.log(v.getSource());
+                v.getSource().on('imageloadstart', function () {
+                    
+                    $('.preloader-wrapper').show();
+                });
+                v.getSource().on('imageloaderror', function () {
+                    
+                    $('.preloader-wrapper').hide();
+                    
+                });
             });
+
+
         }
     </script>
 </head>
@@ -101,7 +126,8 @@
 
 
 
-        <div id='wait_coupe_trajet' class="preloader-wrapper big active" style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
+        <div id='wait_coupe_trajet' class="preloader-wrapper big active"
+            style="position:absolute;  top:50%; left:50%; margin-left: -32px ;margin-top:  -32px;">
             <div class="spinner-layer spinner-blue-only">
                 <div class="circle-clipper left">
                     <div class="circle"></div>

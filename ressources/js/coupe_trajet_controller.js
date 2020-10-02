@@ -16,7 +16,7 @@ class coupe_trajet_Controller {
             me.list.push([v])
         });
 
-        this.parametres = { hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, iso_hcl: false, uv_alt: true };
+        this.parametres = { axes: true, relief: true, hu: false, rflctvt: false, vv2: false, iso_m10: false, iso_0: false, iso_p5: false, theta: false, tke: false, hcl: false, uv_alt: true };
         this.duree = 1000 * 60 * 60;
         this.fl = '100';
         this.depart = null;
@@ -57,7 +57,7 @@ class coupe_trajet_Controller {
 
     }
     load_from_storage(index) {
-        if (localStorage.getItem('liste_coupe_trajet_'+localisation.origin) == null) {
+        if (localStorage.getItem('liste_coupe_trajet_' + localisation.origin) == null) {
 
             return;
         }
@@ -66,7 +66,7 @@ class coupe_trajet_Controller {
 
             //console.log(jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin)));
             //console.log(index);
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin))[index];
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_' + localisation.origin))[index];
 
             this.name = t.name;
             this.etapes = t.etapes;
@@ -85,7 +85,7 @@ class coupe_trajet_Controller {
 
         this.name = name;
         this.date = Date.now();
-        if (localStorage.getItem('liste_coupe_trajet_'+localisation.origin) == null) {
+        if (localStorage.getItem('liste_coupe_trajet_' + localisation.origin) == null) {
 
             var t = [this];
 
@@ -94,7 +94,7 @@ class coupe_trajet_Controller {
 
 
 
-            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_'+localisation.origin));
+            var t = jQuery.parseJSON(localStorage.getItem('liste_coupe_trajet_' + localisation.origin));
 
 
 
@@ -130,7 +130,7 @@ class coupe_trajet_Controller {
         }
 
 
-        localStorage.setItem('liste_coupe_trajet_'+localisation.origin, JSON.stringify(t))
+        localStorage.setItem('liste_coupe_trajet_' + localisation.origin, JSON.stringify(t))
 
     }
     remove_etape(key) {
@@ -212,37 +212,54 @@ class coupe_trajet_Controller {
             html += "<div class='row ' style='margin-left:0.25rem;margin-right:0.25rem;'>";
 
             html += "<div class='input-field col s12'>";
-            html += "<select id='choix_layer_trajet' multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;\">";
+            html += "<select id='choix_layer_trajet' multiple onchange=\"$.each(coupe_trajet_en_cours.parametres,function(k,v){coupe_trajet_en_cours.parametres[k]=false;});$.each($(this).formSelect('getSelectedValues'),function(k,v){coupe_trajet_en_cours.parametres[v]=true;});coupe_trajet_en_cours.parametres['uv_alt']=true;coupe_trajet_en_cours.parametres['axes']=true;coupe_trajet_en_cours.parametres['relief']=true;\">";
+
+            if (localisation.origin == 'fr') {
+                html += "<option value='t' ";
+                this.parametres.t == true ? html += 'selected' : html += '';
+                html += ">" + $_t + "</option>";
+            }
+
             html += "<option value='hu' ";
             this.parametres.hu == true ? html += 'selected' : html += '';
             html += ">" + $_hu + "</option>";
+
             html += "<option value='rflctvt'";
             this.parametres.rflctvt == true ? html += 'selected' : html += '';
             html += ">" + $_rflctvt + "</option>";
+
             html += "<option value='vv2'";
             this.parametres.vv2 == true ? html += 'selected' : html += '';
             html += ">" + $_vv2 + "</option>";
+
             html += "<option value='iso_m10'";
             this.parametres.iso_m10 == true ? html += 'selected' : html += '';
             html += ">" + $_iso_m10 + "</option>";
+
             html += "<option value='iso_0'";
             this.parametres.iso_0 == true ? html += 'selected' : html += '';
             html += ">" + $_iso_0 + "</option>";
-            html += "<option value='iso_p5'";
-            this.parametres.iso_p5 == true ? html += 'selected' : html += '';
-            html += ">" + $_iso_p5 + "</option>";
-            html += "<option value='theta'";
-            this.parametres.theta == true ? html += 'selected' : html += '';
-            html += ">" + $_theta + "</option>";
+            if (localisation.origin == 'fr') {
+                html += "<option value='iso_p5'";
+                this.parametres.iso_p5 == true ? html += 'selected' : html += '';
+                html += ">" + $_iso_p5 + "</option>";
+
+                html += "<option value='theta'";
+                this.parametres.theta == true ? html += 'selected' : html += '';
+                html += ">" + $_theta + "</option>";
+            }
             html += "<option value='tke'";
             this.parametres.tke == true ? html += 'selected' : html += '';
             html += ">" + $_tke + "</option>";
-            html += "<option value='iso_hcl'";
-            this.parametres.iso_hcl == true ? html += 'selected' : html += '';
+
+            html += "<option value='hcl'";
+            this.parametres.hcl == true ? html += 'selected' : html += '';
             html += ">" + $_hcl + "</option>";
+
             html += "<option value='uv_alt' ";
             this.parametres.uv_alt == true ? html += 'selected disabled' : html += 'disabled';
             html += ">" + $_uv_alt + "</option>";
+
             html += "</select>";
 
             html += "<label>" + $_choix_parametre_trajet + "</label>";
@@ -259,19 +276,19 @@ class coupe_trajet_Controller {
             html += "<select id='niveau_de_sol_trajet' onchange=\"coupe_trajet_en_cours.fl=$(this).val();\">";
             html += "<option value='050' ";
             this.fl == '050' ? html += 'selected' : html += '';
-            html += ">FL050</option>";
+            html += ">850 hPa" + get_hPa_by_FL('850') + "</option>";
             html += "<option value='100' ";
             this.fl == '100' ? html += 'selected' : html += '';
-            html += ">FL100</option>";
+            html += ">700 hPa" + get_hPa_by_FL('700') + "</option>";
             html += "<option value='200' ";
             this.fl == '200' ? html += 'selected' : html += '';
-            html += ">FL200</option>";
+            html += ">465 hPa" + get_hPa_by_FL('465') + "</option>";
             html += "<option value='300' ";
             this.fl == '300' ? html += 'selected' : html += '';
-            html += ">FL300</option>";
+            html += ">300 hPa" + get_hPa_by_FL('300') + "</option>";
             html += "<option value='400' ";
             this.fl == '400' ? html += 'selected' : html += '';
-            html += ">FL400</option>";
+            html += ">185 hPa" + get_hPa_by_FL('185') + "</option>";
 
             html += "</select>";
             html += "<label>" + $_niveau_de_vol + "</label>";
@@ -300,12 +317,12 @@ class coupe_trajet_Controller {
             $('#collapsible_trajet').collapsible();
 
 
-            
 
-            
+
+
 
             M.updateTextFields();
-            $('select').formSelect({classes: 'leftplus',  dropdownOptions: {coverTrigger: false}});
+            $('select').formSelect({ classes: 'leftplus', dropdownOptions: { coverTrigger: false } });
 
             var dateSlider = document.getElementById('slider_echeance_trajet');
             noUiSlider.create(dateSlider, {

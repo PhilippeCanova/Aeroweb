@@ -4,7 +4,12 @@
 <head>
   <link rel="shortcut icon" type="image/png" href="./favicon.ico" />
   <!--Import Google Icon Font-->
+<<<<<<< HEAD
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+=======
+  <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+  <link type="text/css" rel="stylesheet" href="nouislider/nouislider.min.css" media="screen,projection" />
+>>>>>>> refs/remotes/origin/master
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
   <link type="text/css" rel="stylesheet" href="ol/ol.css" />
   <link type="text/css" rel="stylesheet" href="ressources/css/index.css" />
@@ -36,7 +41,7 @@
         <label></label>
       </div>
 
-      <div id='menu1_content'>
+      <div id='menu1_content' class="col">
 
 
 
@@ -47,7 +52,7 @@
 
       <ul class="collapsible">
         <li>
-          <div class="collapsible-header"><i class="material-icons">local_airport</i><span>aero</span><span
+          <div class="collapsible-header"><i class="material-icons icon-skyatlas"  style="font-size:120%"></i><span>aero</span><span
               id='cpt_layer_menu_aero' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_aero'>
           </div>
@@ -56,7 +61,7 @@
         <li class="active">
           <div class="collapsible-header">
             <!--<i class="material-icons">explore</i>-->
-            <img style='width:30px;height:30px;margin-top:10px;margin-right:10px;'src='./ressources/images/vent.png'>
+            <i class="material-icons icon-wind"></i>
             <span>Vent</span><span
               id='cpt_layer_menu_vent' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_vent'>
@@ -69,14 +74,14 @@
           </div>
         </li>
         <li>
-          <div class="collapsible-header"><i class="material-icons">grain</i><span>Pluie</span><span
+          <div class="collapsible-header"><i class="material-icons icon-droplet" style="font-size:140%"></i><span>Pluie</span><span
               id='cpt_layer_menu_precip' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_precip'>
           </div>
         </li>
 
         <li>
-          <div class="collapsible-header"><i class="material-icons">wb_sunny</i><span>tempe</span><span
+          <div class="collapsible-header"><i class="material-icons icon-thermometer-3"></i><span>tempe</span><span
               id='cpt_layer_menu_tempe' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_tempe'>
           </div>
@@ -90,6 +95,7 @@
 
       <div class='row'>
         <label class='col s12 center label-title' id='label_choix_run_arome'>Choix du run</label>
+        <div class="col s1"></div>
         <div class='col s2' id='switch_run_prevision_arome'></div>
         <div id='choix_run_arome' class='col s8 center small_span'></div>
         
@@ -101,7 +107,7 @@
 
       <ul class="collapsible">
         <li>
-          <div class="collapsible-header"><i class="material-icons">album</i><span>Analyse_generale</span><span
+          <div class="collapsible-header"><i class="material-icons icon-earth" style="font-size:140%"></i><span>Analyse_generale</span><span
               id='cpt_layer_menu_analyse_generale' class="cpt_layer badge">0</span></div>
           <div class="collapsible-body row" id='menu_analyse_generale'>
           </div>
@@ -109,6 +115,7 @@
       </ul>
       <div class='row'>
         <label class='col s12 center label-title' id='label_choix_run_arpege'>Choix du run</label>
+        <div class="col s1"></div>
         <div class='col s2' id='switch_run_prevision_arpege'></div>
         <div id='choix_run_arpege' class='col s8 center small_span'></div>
       </div>
@@ -127,7 +134,7 @@
         <label></label>
       </div>
 
-      <div id='menu2_content'>
+      <div id='menu2_content' class="row">
 
 
 
@@ -136,12 +143,14 @@
 
     </div>
     <div id="menu4" class="sidenav collapsible">
+      <ul class="collapsible">
       <li class="active">
         <div class="collapsible-header"><i class="material-icons">remove_red_eye</i><span>Observationaaa</span><span
             id='cpt_layer_menu_imagerie' class="cpt_layer badge">0</span></div>
         <div class="collapsible-body row" id='menu_imagerie'>
         </div>
       </li>
+    </ul>
 <hr>
       <div class='row'>
         <label class='label-title col s12 center'>Vitesse animation observation</label>
@@ -156,8 +165,7 @@
       <h5 id="id_version">Version 1.0</h5>
       <div id='menu_preference_language' class="input-field col s12">
 
-        
-        <!--TODO philippe <select onchange="window.location.assign('./index.html?language='+$(this).val())">-->
+
         <select onchange="window.location.assign('./index.html?language='+$(this).val())">
           <option value='fr' selected>Francais</option>
           <option value='en'>Anglais</option>
@@ -165,7 +173,7 @@
         <label>Choisissez la langue</label>
       </div>
       <div id='menu_preference_geo' class="input-field col s12">
-        <select onchange="force_origin($(this).val());">
+        <select onchange="force_origin($(this).val());window.location.assign('./index.html');">
           <option value='fr' selected>Métropole</option>
           <option value='re'>Réunion</option>
           <option value='my'>Mayotte/option>
@@ -369,20 +377,20 @@
           <div class='col s1 m1 l1'></div>
           <div id="slider_echeance" class='col s9 m10 l10'></div>
 
-          <div class='col s2 m1 l1 center'><a onclick="update_context(true);"><i
+          <div class='col s2 m1 l1 center' style="font-size:120%"><a onclick="update_context(true);"><i
                 class="material-icons  mybutton">autorenew</i></a></div>
 
-          <div class='col s2 center'><a id='play_first' onclick="slider_animate.first();"><i
+          <div class='col s2 center' style="font-size:160%"><a id='play_first' onclick="slider_animate.first();"><i
                 class="material-icons  mybutton">first_page</i></a></div>
-          <div class='col s2 center'><a id='play_prev' onclick="slider_animate.prev();"><i
+          <div class='col s2 center' style="font-size:160%"><a id='play_prev' onclick="slider_animate.prev();"><i
                 class="material-icons  mybutton">skip_previous</i></a></div>
 
-          <div class='col s4 center'><a id='play_stop' onclick="$('#play_stop i').text(slider_animate.play_stop());"><i
+          <div class='col s4 center' style="font-size:160%"><a id='play_stop' onclick="$('#play_stop i').text(slider_animate.play_stop());"><i
                 class="material-icons  mybutton">play_arrow</i></a></div>
 
-          <div class='col s2 center'><a id='play_next' onclick="slider_animate.next();"><i
+          <div class='col s2 center' style="font-size:160%"><a id='play_next' onclick="slider_animate.next();"><i
                 class="material-icons  mybutton">skip_next</i></a></div>
-          <div class='col s2 center'><a id='play_last' onclick="slider_animate.end();"><i
+          <div class='col s2 center' style="font-size:160%"><a id='play_last' onclick="slider_animate.end();"><i
                 class="material-icons  mybutton">last_page</i></a></div>
         </div>
       </div>

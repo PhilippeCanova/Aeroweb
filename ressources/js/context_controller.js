@@ -120,6 +120,12 @@ class context_Controller {
                 var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
                 if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
                 this.date_run_arome = d;
+                this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 12, 0, 0, 0));
+            }
+            else if (hhmm > "08h15" && hhmm <= "14h15") {
+                var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() , 0, 0, 0, 0));
+                if (this.date_run_arome != null && this.date_run_arome.toISOString() != d.toISOString()) retour.date_run_arome_change = true;
+                this.date_run_arome = d;
                 this.date_run_arome_precedent = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 18, 0, 0, 0));
             }
             else if (hhmm > "14h15" && hhmm <= "20h15") {
