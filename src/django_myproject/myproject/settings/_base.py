@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os, json, sys
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
+
+from myproject.apps.core.versioning import get_git_changeset_timestamp, get_static_version
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -46,6 +49,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'myproject.apps.magazine',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -136,7 +140,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+#timestamp = get_git_changeset_timestamp(BASE_DIR)
+static_version = get_static_version(BASE_DIR)
+STATIC_URL = f'/static/{static_version}/'
+#STATIC_URL = f'/static/'
+
 STATIC_ROOT = Path(BASE_DIR).joinpath('static')
 STATICFILES_DIRS = [
 	Path(BASE_DIR).joinpath('myproject').joinpath('site_static'),
@@ -153,3 +161,14 @@ EXTERNAL_LIBS_PATH = Path(EXTERNAL_BASE).joinpath("libs")
 EXTERNAL_APPS_PATH = Path(EXTERNAL_BASE).joinpath("apps")
 sys.path = ["", EXTERNAL_LIBS_PATH, EXTERNAL_APPS_PATH] + sys.path
 
+# Override de certaines config d'apps que l'on veut customiser
+# Pas forcément utile sur des apps non réutilisées
+MAGAZINE_ARTICLE_THEME_CHOICES = [
+    ('futurism', _("Futurism")),
+    ('nostalgia', _("Nostalgia")),
+    ('sustainability', _("Sustainability")),
+    ('wonder', _("Wonder")),
+    ('positivity', _("Positivity")),
+    ('solutions', _("Solutions")),
+    ('science', _("Science")),
+]
