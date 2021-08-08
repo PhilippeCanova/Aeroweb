@@ -49,7 +49,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'myproject.apps.magazine',
+    'myproject.apps.core.apps.CoreConfig',
+    'myproject.apps.magazine.apps.MagazineAppConfig',
+    'myproject.apps.webvfr.apps.WebvfrConfig',
+    'myproject.apps.webpro.apps.WebproConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,7 +76,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [Path(BASE_DIR).joinpath('mmyproject').joinpath('templates')],
+        'DIRS': [Path(BASE_DIR).joinpath('myproject').joinpath('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
 TIME_ZONE = 'UTC'
 
@@ -172,3 +175,5 @@ MAGAZINE_ARTICLE_THEME_CHOICES = [
     ('solutions', _("Solutions")),
     ('science', _("Science")),
 ]
+
+LOGIN_URL = 'web/accounts/login/'
